@@ -26,8 +26,20 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Security
-    ALLOWED_HOSTS: list[str] = ["localhost", "127.0.0.1"]
-    CORS_ORIGINS: list[str] = []
+    ALLOWED_HOSTS: str = "localhost,127.0.0.1"
+    CORS_ORIGINS: str = ""
+
+    @property
+    def allowed_hosts_list(self) -> list[str]:
+        """Convert comma-separated string to list"""
+        return [host.strip() for host in self.ALLOWED_HOSTS.split(",") if host.strip()]
+
+    @property
+    def cors_origins_list(self) -> list[str]:
+        """Convert comma-separated string to list"""
+        if not self.CORS_ORIGINS:
+            return []
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
     
     model_config = SettingsConfigDict(
         case_sensitive=True,
