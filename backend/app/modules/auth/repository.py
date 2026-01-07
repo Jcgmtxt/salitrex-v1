@@ -53,4 +53,13 @@ class UserRepository:
     def get_active_users(self)-> List[UserResponse]:
         return self.db.query(User).filter(User.is_active == True).all()
 
+    def delete_user(self, user_id: int) -> None:
+        user = self.db.get(User, user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.is_active = False # Soft delete
+        user.deleted_at = datetime.now()
+        self.db.add(user)
+        self.db.commit()
+
 

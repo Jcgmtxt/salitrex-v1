@@ -1,14 +1,13 @@
 # Database connection logic
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlmodel import create_engine, Session, SQLModel
 from app.core.config import settings
 
-engine = create_engine(settings.DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(settings.DATABASE_URL, echo=True)
+SessionLocal = Session  # SQLModel Session is what we want, but usually we use a factory or just Session(engine)
 
+# Dependency
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session
+
+
