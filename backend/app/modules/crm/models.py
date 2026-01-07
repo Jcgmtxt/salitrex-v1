@@ -15,6 +15,7 @@ class DocumentType(str, enum.Enum):
     PASSPORT = "passport"
     
 class Client(SQLModel, table=True):
+    __tablename__ = "clients"
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(min_length=3, max_length=255)
     document_type: DocumentType = Field(min_length=3, max_length=50)
@@ -22,8 +23,8 @@ class Client(SQLModel, table=True):
     #TODO: Preguntar si se requiere el campo de email
     email: EmailStr = Field(min_length=3, max_length=50, nullable=False, index=True)
     phone: str = Field(min_length=3, max_length=50, nullable=False, index=True)
-    created_by: Optional[int] = Field(default=None, foreign_key="user.id")
-    updated_by: Optional[int] = Field(default=None, foreign_key="user.id")
+    created_by: Optional[int] = Field(default=None, foreign_key="users.id")
+    updated_by: Optional[int] = Field(default=None, foreign_key="users.id")
     deleted_by: Optional[int] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
@@ -35,15 +36,16 @@ class Client(SQLModel, table=True):
         return self.name
 
 class Cars (SQLModel, table=True):
+    __tablename__ = "cars"
     id: Optional[int] = Field(default=None, primary_key=True)
-    client_id: int = Field(foreign_key="client.id")
+    client_id: int = Field(foreign_key="clients.id")
     license_plate: str = Field(min_length=3, max_length=50, unique=True, index=True)
     brand: str = Field(min_length=3, max_length=50)
     model: str = Field(min_length=3, max_length=50)
     year: int = Field()
     color: str = Field(min_length=3, max_length=50)
-    created_by: Optional[int] = Field(default=None, foreign_key="user.id")
-    updated_by: Optional[int] = Field(default=None, foreign_key="user.id")
+    created_by: Optional[int] = Field(default=None, foreign_key="users.id")
+    updated_by: Optional[int] = Field(default=None, foreign_key="users.id")
     deleted_by: Optional[int] = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)

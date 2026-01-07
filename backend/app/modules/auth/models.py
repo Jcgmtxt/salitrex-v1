@@ -10,6 +10,7 @@ class UserRole(str, enum.Enum):
     OPERATOR = "operator"
 
 class User(SQLModel, table=True):
+    __tablename__ = "users"
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(min_length=3, max_length=50)
     email: EmailStr = Field(min_length=3, max_length=50)
