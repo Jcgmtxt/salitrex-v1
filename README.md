@@ -90,8 +90,16 @@ bun run dev
 npm run dev
 ```
 
+Run for production (Bun):
+```bash
+bun start
+```
+
 ## Development Status
 - [x] Phase 1: Planning & Architecture
 - [x] Phase 2: Project Initialization
 - [/] Phase 3: Database & Models (Current)
+
+---
+*This project was initialized using `bun init` in bun v1.3.5.*
 
