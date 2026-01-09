@@ -1,7 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field, Field, field_validator
-from typing import Literal
+from typing import Literal, List
 import secrets
+import json
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Salitrex"
@@ -26,20 +27,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Security
-    ALLOWED_HOSTS: str = "localhost,127.0.0.1"
-    CORS_ORIGINS: str = ""
-
-    @property
-    def allowed_hosts_list(self) -> list[str]:
-        """Convert comma-separated string to list"""
-        return [host.strip() for host in self.ALLOWED_HOSTS.split(",") if host.strip()]
-
-    @property
-    def cors_origins_list(self) -> list[str]:
-        """Convert comma-separated string to list"""
-        if not self.CORS_ORIGINS:
-            return []
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
+    CORS_ORIGINS: List[str] = []
     
     model_config = SettingsConfigDict(
         case_sensitive=True,
@@ -47,6 +36,30 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore"
     )
+    
+    @field_validator("ALLOWED_HOSTS", mode="before")
+    @classmethod
+    def parse_allowed_hosts(cls, v):
+        """Parsea ALLOWED_HOSTS desde string JSON o lista"""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                # Soporte para formato separado por comas: "host1,host2"
+                return [host.strip() for host in v.split(",") if host.strip()]
+        return v
+    
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        """Parsea CORS_ORIGINS desde string JSON o lista"""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                # Soporte para formato separado por comas: "origin1,origin2"
+                return [origin.strip() for origin in v.split(",") if origin.strip()]
+        return v
     
     @field_validator("SECRET_KEY")
     @classmethod
