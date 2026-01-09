@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import computed_field, Field, field_validator
-from typing import Literal, List
+from typing import Literal, List, Any, Union
 import secrets
 import json
 
@@ -11,24 +11,21 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: Literal["development", "staging", "production"] = "development"
     
-    # Database settings - SIN valores por defecto sensibles
     DB_CONNECTION: str = "postgresql"
     DB_HOST: str
     DB_PORT: int = 5432
     DB_DATABASE: str
     DB_USERNAME: str
-    DB_PASSWORD: str  # Sin valor por defecto
+    DB_PASSWORD: str
     
-    # JWT Settings - REQUERIDOS en producción
     SECRET_KEY: str = Field(
         default_factory=lambda: secrets.token_urlsafe(32) if __name__ == "__main__" else None
     )
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
-    # Security
-    ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1"]
-    CORS_ORIGINS: List[str] = []
+    ALLOWED_HOSTS: Union[List[str], str] = ["localhost", "127.0.0.1"]
+    CORS_ORIGINS: Union[List[str], str] = []
     
     model_config = SettingsConfigDict(
         case_sensitive=True,
@@ -40,31 +37,26 @@ class Settings(BaseSettings):
     @field_validator("ALLOWED_HOSTS", mode="before")
     @classmethod
     def parse_allowed_hosts(cls, v):
-        """Parsea ALLOWED_HOSTS desde string JSON o lista"""
         if isinstance(v, str):
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
-                # Soporte para formato separado por comas: "host1,host2"
                 return [host.strip() for host in v.split(",") if host.strip()]
         return v
     
     @field_validator("CORS_ORIGINS", mode="before")
     @classmethod
     def parse_cors_origins(cls, v):
-        """Parsea CORS_ORIGINS desde string JSON o lista"""
         if isinstance(v, str):
             try:
                 return json.loads(v)
             except json.JSONDecodeError:
-                # Soporte para formato separado por comas: "origin1,origin2"
                 return [origin.strip() for origin in v.split(",") if origin.strip()]
         return v
     
     @field_validator("SECRET_KEY")
     @classmethod
     def validate_secret_key(cls, v: str, info) -> str:
-        """Asegura que SECRET_KEY sea fuerte en producción"""
         if info.data.get("ENVIRONMENT") == "production":
             if not v or len(v) < 32:
                 raise ValueError(
