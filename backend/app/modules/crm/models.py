@@ -18,7 +18,7 @@ class Client(SQLModel, table=True):
     __tablename__ = "clients"
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(min_length=3, max_length=255)
-    document_type: DocumentType = Field(min_length=3, max_length=50)
+    document_type: DocumentType = Field(max_length=50)
     identity_number: str = Field(min_length=3, max_length=50, unique=True, index=True)
     #TODO: Preguntar si se requiere el campo de email
     email: EmailStr = Field(min_length=3, max_length=50, nullable=False, index=True)

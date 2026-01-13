@@ -1,8 +1,10 @@
+from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel.orm.session import Session
 from app.core.database import get_db
 from app.core.security import verify_password, create_access_token
-from app.modules.auth.schemas import CreateUser, UpdateUser, AuthUser, AuthResponse, UserResponse
+from app.modules.auth.schemas import CreateUser, UpdateUser, AuthResponse, UserResponse
 from app.modules.auth.repository import UserRepository
 from app.modules.auth.dependencies import get_admin_user, get_current_active_user
 from app.modules.auth.models import User
@@ -18,12 +20,12 @@ def register_user(user: CreateUser, db: Session = Depends(get_db)):
     return repo.create_user(user)
 
 @router.post("/login", response_model=AuthResponse)
-def login(user: AuthUser, db: Session = Depends(get_db)):
+def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
     repo = UserRepository(db)
-    db_user = repo.get_user_by_email(user.email)
+    db_user = repo.get_user_by_email(form_data.username)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    if not verify_password(user.password, db_user.hashed_password):
+    if not verify_password(form_data.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Incorrect password")
     
     access_token = create_access_token(data={"sub": db_user.email})
