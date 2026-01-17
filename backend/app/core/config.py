@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     
     ALLOWED_HOSTS: Union[List[str], str] = ["localhost", "127.0.0.1"]
     CORS_ORIGINS: Union[List[str], str] = []
+
+    # AWS S3 Settings
+    AWS_ACCESS_KEY_ID: Optional[str] = None
+    AWS_SECRET_ACCESS_KEY: Optional[str] = None
+    AWS_REGION: str = "us-east-1"
+    S3_BUCKET: Optional[str] = None
     
     model_config = SettingsConfigDict(
         case_sensitive=True,
@@ -79,6 +85,9 @@ class Settings(BaseSettings):
     @property
     def DATABASE_URL(self) -> str:
         """Construye la URL sin exponerla directamente"""
+        if self.DB_CONNECTION == "sqlite":
+            return f"sqlite:///{self.DB_DATABASE}"
+        
         return (
             f"{self.DB_CONNECTION}://{self.DB_USERNAME}:"
             f"{self.DB_PASSWORD}@{self.DB_HOST}:"
