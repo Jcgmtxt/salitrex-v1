@@ -1,3 +1,4 @@
+from sqlalchemy.sql.sqltypes import DateTime
 from fastapi import APIRouter, Depends, Query, UploadFile, File, Form, HTTPException
 from sqlmodel import Session
 from typing import List, Optional
@@ -5,7 +6,7 @@ from app.core.database import get_db
 from app.modules.income.service import IncomeService
 from app.modules.income.schemas import IncomeRead, IncomeReadWithDetails, IncomeCreate, IncomeUpdate
 from app.modules.income.models import PhotoCategory
-from app.modules.auth.security import get_current_user
+from app.modules.auth.dependencies import get_current_active_user
 from app.modules.auth.models import User
 import json
 
@@ -19,7 +20,7 @@ async def create_income(
     files: List[UploadFile] = File([]),
     categories: List[str] = Form([]), # Pass as list of strings "entry", "process", etc.
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     service = IncomeService(db)
     
@@ -69,7 +70,7 @@ def update_income(
     income_id: int, 
     income_in: IncomeUpdate, 
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_active_user)
 ):
     service = IncomeService(db)
     income = service.update_income(income_id, income_in, user_id=current_user.id)

@@ -1,4 +1,3 @@
-# Models for Workshop Module
 from app.modules.crm.models import Cars, Client
 from enum import Enum
 from sqlmodel import SQLModel, Field, Relationship
@@ -10,10 +9,6 @@ from datetime import datetime
 if TYPE_CHECKING:
     from app.modules.auth.models import User
     from app.modules.crm.models import Cars, Client
-    # Assuming Cars and Client models are in CRM module, adjust import path as necessary
-    # Since we are using string forward refs, we might not strictly need imports for execution 
-    # but good for type checking. For now, using string forward refs.
-    pass
 
 class PhotoCategory(str, Enum):
     ENTRY = "entry"
@@ -23,8 +18,11 @@ class PhotoCategory(str, Enum):
 class Photos(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     income_id: int = Field(foreign_key="income.id")
-    photo_url: str = Field()
+    s3_key: str = Field()
     category: PhotoCategory = Field(default=PhotoCategory.ENTRY)
+    
+    # Non-persistent field for temporary URLs
+    presigned_url: Optional[str] = None
 
     income: Optional["Income"] = Relationship(back_populates="photos")
 

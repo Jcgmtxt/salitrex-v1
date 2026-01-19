@@ -5,7 +5,7 @@ from app.modules.income.models import PhotoCategory
 
 # --- PHOTO SCHEMAS ---
 class PhotoBase(BaseModel):
-    photo_url: str
+    s3_key: str
     category: PhotoCategory = PhotoCategory.ENTRY
 
 class PhotoCreate(PhotoBase):
@@ -14,6 +14,7 @@ class PhotoCreate(PhotoBase):
 class PhotoRead(PhotoBase):
     id: int
     income_id: int
+    presigned_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

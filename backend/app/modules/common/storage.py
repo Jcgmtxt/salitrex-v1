@@ -14,11 +14,13 @@ class S3Storage:
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION
         )
-        self.bucket = settings.S3_BUCKET
+    @property
+    def bucket(self) -> Optional[str]:
+        return settings.S3_BUCKET
 
     def upload_file(self, file_content: bytes, object_name: str, content_type: Optional[str] = None) -> Optional[str]:
         """
-        Uploads a file to S3 and returns the public URL.
+        Uploads a file to S3 and returns the object key (object_name).
         """
         if not self.bucket:
             logger.error("S3_BUCKET is not configured.")
@@ -29,10 +31,6 @@ class S3Storage:
             if content_type:
                 extra_args['ContentType'] = content_type
             
-            # Note: Depending on bucket policy, you might need ACL='public-read'
-            # But usually it's better to use IAM policies or generate signed URLs.
-            # For this MVP, we assume the bucket allows public read or uses a policy.
-            
             self.s3_client.put_object(
                 Bucket=self.bucket,
                 Key=object_name,
@@ -40,11 +38,28 @@ class S3Storage:
                 **extra_args
             )
             
-            url = f"https://{self.bucket}.s3.{settings.AWS_REGION}.amazonaws.com/{object_name}"
-            return url
+            return object_name #
             
         except ClientError as e:
             logger.error(f"Error uploading to S3: {e}")
+            return None
+
+    def get_presigned_url(self, object_name: str, expires_in: int = 3600) -> Optional[str]:
+        """
+        Generates a presigned URL for a private S3 object.
+        """
+        if not self.bucket:
+            return None
+            
+        try:
+            url = self.s3_client.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': self.bucket, 'Key': object_name},
+                ExpiresIn=expires_in
+            )
+            return url
+        except ClientError as e:
+            logger.error(f"Error generating presigned URL: {e}")
             return None
 
 storage = S3Storage()
