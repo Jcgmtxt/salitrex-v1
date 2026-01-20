@@ -13,6 +13,12 @@ class DocumentType(str, enum.Enum):
     CE = "ce"
     NIT = "nit"
     PASSPORT = "passport"
+
+class VehicleSize(str, enum.Enum):
+    SMALL = "small"
+    MEDIUM = "medium"
+    LARGE = "large"
+    EXTRA_LARGE = "extra_large"
     
 class Client(SQLModel, table=True):
     __tablename__ = "clients"
@@ -44,6 +50,7 @@ class Cars (SQLModel, table=True):
     model: str = Field(min_length=3, max_length=50)
     year: int = Field()
     color: str = Field(min_length=3, max_length=50)
+    size: VehicleSize = Field(default=VehicleSize.MEDIUM)
     created_by: Optional[int] = Field(default=None, foreign_key="users.id")
     updated_by: Optional[int] = Field(default=None, foreign_key="users.id")
     deleted_by: Optional[int] = Field(default=None)

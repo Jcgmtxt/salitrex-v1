@@ -16,6 +16,7 @@ from sqlmodel import SQLModel
 from app.modules.auth.models import User
 from app.modules.crm.models import Client, Cars
 from app.modules.income.models import Income, Photos
+from app.modules.paint.models import PaintJob, PaintConfig, VehicleSizeArea
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -25,16 +25,24 @@ class UserRepository:
         self.db.commit()
         return db_user
 
-    def update_user(self, user: UpdateUser)-> UserResponse:
-        db_user = self.get_user_by_email(user.email)
+    def update_user(self, id: int, user: UpdateUser)-> UserResponse:
+        db_user = self.db.get(User, id)
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
+
+        if user.email != db_user.email:
+            existing_user = self.get_user_by_email(user.email)
+            if existing_user:
+                raise HTTPException(status_code=400, detail="Email already exists")
+
         db_user.name = user.name
         db_user.email = user.email
         db_user.role = user.role
         db_user.updated_at = datetime.now()
+        
         self.db.add(db_user)
         self.db.commit()
+        self.db.refresh(db_user)
         return db_user
 
     def update_password(self, user: UpdateUser)-> UserResponse:
@@ -47,6 +55,9 @@ class UserRepository:
         self.db.commit()
         return db_user
     
+    def get_user(self, id: int)-> UserResponse:
+        return self.db.query(User).filter(User.id == id).first()
+
     def get_user_by_email(self, email: str)-> UserResponse:
         return self.db.query(User).filter(User.email == email).first()
 

@@ -9,6 +9,7 @@ class CreateUser(BaseModel):
     role: UserRole
 
 class UpdateUser(BaseModel):
+    id: int
     name: str
     email: EmailStr
     password: str

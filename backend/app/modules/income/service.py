@@ -39,8 +39,9 @@ class IncomeService:
             file_content = await file.read()
             category = categories[i] if i < len(categories) else PhotoCategory.ENTRY
             
+            # TODO: check this to make scalable
             ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
-            object_name = f"incomes/{now.year}/{now.month:02d}/{now.day:02d}/ingreso_{income.id}/{plate}/{category.value}/{user_id or 'system'}_{uuid.uuid4()}.{ext}"
+            object_name = f"incomes/{now.year}-{now.month:02d}-{now.day:02d}/ingreso-{income.id}_{plate}_{category.value}_{user_id or 'system'}_{uuid.uuid4()}.{ext}"
             
             s3_key = s3_storage.upload_file(
                 file_content=file_content,
