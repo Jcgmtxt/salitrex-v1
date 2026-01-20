@@ -1,4 +1,4 @@
-from app.modules.crm.models import Cars, Client
+from app.modules.crm.models import Cars
 from enum import Enum
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List, TYPE_CHECKING
@@ -7,12 +7,13 @@ from datetime import datetime
 
 # Correct import for forward references
 if TYPE_CHECKING:
-    from app.modules.auth.models import User
-    from app.modules.crm.models import Cars, Client
+    from app.modules.crm.models import Cars
+    from app.modules.paint.models import PaintJob
 
 class PhotoCategory(str, Enum):
     ENTRY = "entry"
     PROCESS = "process"
+    FINISHED = "finished"
     EXIT = "exit"
 
 class Photos(SQLModel, table=True):
@@ -36,6 +37,7 @@ class Income(SQLModel, table=True):
     notes: Optional[str] = Field(default=None, sa_column=Column(TEXT))
 
     photos: List["Photos"] = Relationship(back_populates="income")
+    paint_jobs: List["PaintJob"] = Relationship(back_populates="income")
     car: Optional["Cars"] = Relationship()
 
     created_by: Optional[int] = Field(default=None, foreign_key="users.id")

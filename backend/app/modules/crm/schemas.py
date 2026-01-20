@@ -1,4 +1,4 @@
-from app.modules.crm.models import DocumentType
+from app.modules.crm.models import DocumentType, VehicleSize
 from pydantic.main import BaseModel
 from pydantic import EmailStr
 from datetime import datetime
@@ -12,12 +12,14 @@ class ClientBase(BaseModel):
     email: Optional[EmailStr] = None
     phone: str
 
+
 class CarsBase(BaseModel):
     license_plate: str
     brand: str
     model: str
     year: int
     color: str
+    size: VehicleSize
 
 # Create Schemas
 class ClientCreate(ClientBase):
@@ -40,8 +42,6 @@ class CarUpdate(BaseModel):
     year: Optional[int] = None
     color: Optional[str] = None
 
-
-
 # Read/Response Schemas
 class CarResponse(CarsBase):
     id: int
@@ -53,10 +53,6 @@ class CarResponse(CarsBase):
     
     class Config:
         from_attributes = True
-
-    # Custom validator to flatten client name if needed, 
-    # but with from_attributes it maps directly if property exists.
-    # We might need a computed property on the model or map it in service.
 
 # TODO: Agregar las entradas 
 
