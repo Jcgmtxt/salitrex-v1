@@ -4,7 +4,8 @@ import {
     createRouter,
     Outlet,
 } from "@tanstack/react-router";
-import { Home } from "./pages/Home";
+import { Home } from "../pages/Home";
+import { Login } from "../pages/Login";
 
 // Create the Root Route
 const rootRoute = createRootRoute({
@@ -20,6 +21,12 @@ const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
     component: Home,
+});
+
+const loginRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/login",
+    component: Login,
 });
 
 // Create the route tree

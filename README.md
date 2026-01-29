@@ -4,10 +4,12 @@
 Salitrex is a comprehensive management system for an automotive workshop, initially focusing on the Paint Module. It allows tracking clients, vehicles, service entries, and generating daily delivery reports.
 
 ## Architecture
-The project follows a split-stack architecture:
+The project follows a split-stack architecture, utilizing **Bun** as the primary runtime and orchestrator for the frontend.
 
 - **Backend**: FastAPI (Python) using a Modular Monolith pattern.
-- **Frontend**: React + TypeScript + bun (Vite).
+- **Frontend**: React + TypeScript + **Bun** (Native integration, no Vite required).
+- **Routing**: **TanStack Router** (Type-safe routing).
+- **Styling**: **Tailwind CSS v4** + Shadcn/UI (Premium dark aesthetic).
 - **Database**: PostgreSQL.
 - **Storage**: AWS S3 (for vehicle photos/videos).
 
@@ -22,8 +24,13 @@ salitrex/
 │   │   └── main.py         # Entry point
 │   └── pyproject.toml      # Python dependencies
 ├── frontend/               # React Application
-│   ├── src/                # Components, Pages, Hooks
-│   └── bun.lockb           # Bun lockfile (to be generated)
+│   ├── src/
+│   │   ├── pages/          # Page components (Home, etc.)
+│   │   ├── router.tsx      # Routing configuration
+│   │   ├── index.ts        # Bun server entry point (Dev & API)
+│   │   └── frontend.tsx    # React client entry point
+│   ├── bunfig.toml         # Bun configuration (Tailwind plugin)
+│   └── package.json
 └── README.md
 ```
 
@@ -31,18 +38,13 @@ salitrex/
 
 ### Prerequisites
 - **Python**: 3.10+
-- **Node.js/npm**: Required if Bun is not installed or supported.
-- **Bun**: Recommended for Frontend (Install via `powershell -c "irm bun.sh/install.ps1 | iex"`).
+- **Bun**: Required (v1.3.5+). Install via `curl -fsSL https://bun.sh/install | bash` (Mac/Linux) or `powershell -c "irm bun.sh/install.ps1 | iex"` (Windows).
 - **PostgreSQL**: Running locally or via Docker.
 
 ### 1. Backend Setup
 Navigate to the `backend/` directory:
 ```bash
 cd backend
-```
-
-Create and activate a virtual environment:
-```bash
 python -m venv venv
 # Windows
 .\venv\Scripts\activate
@@ -53,53 +55,26 @@ source venv/bin/activate
 Install dependencies:
 ```bash
 pip install -r requirements.txt
-```
-
-Run database migrations (once models are ready):
-```bash
 alembic upgrade head
-```
-
-Start the development server:
-```bash
 uvicorn app.main:app --reload
 ```
-Swagger UI will be available at: `http://localhost:8000/docs`
+Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
 Navigate to the `frontend/` directory:
 ```bash
 cd frontend
-```
-
-Install dependencies (using Bun or npm):
-```bash
-# Option A: Bun (Recommended)
 bun install
-
-# Option B: npm (If Bun fails)
-npm install
-```
-
-Start the development server:
-```bash
-# Bun
 bun run dev
-
-# npm
-npm run dev
 ```
+The application will be available at: `http://localhost:3000`
 
-Run for production (Bun):
-```bash
-bun start
-```
-
-## Development Status
-- [x] Phase 1: Planning & Architecture
-- [x] Phase 2: Project Initialization
-- [/] Phase 3: Database & Models (Current)
+### Key Features (Implemented)
+- **Native Bun Server**: Handles HMR and routing without external bundlers.
+- **TanStack Router**: Type-safe navigation across the app.
+- **Premium UI**: Dark-themed dashboard with hardware-accelerated animations.
+- **Tailwind v4 (@theme)**: Modern CSS architecture for faster builds and better variables.
 
 ---
-*This project was initialized using `bun init` in bun v1.3.5.*
+*This project is powered by Bun.*
 
