@@ -1,21 +1,24 @@
-import path from "path"
-import { defineConfig } from 'vite'
+import path from "path";
+import { defineConfig } from 'vitest/config'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
-import { TanStackRouterVite } from '@tanstack/router-vite-plugin'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
-    TanStackRouterVite(),
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx}'],
   },
 })

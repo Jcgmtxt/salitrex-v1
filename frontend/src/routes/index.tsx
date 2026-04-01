@@ -1,14 +1,16 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useAuthStore } from "@/stores/auth";
 
 export const Route = createFileRoute("/")({
-  component: Home,
+  beforeLoad: () => {
+    const isAuthenticated = useAuthStore.getState().isAuthenticated;
+    if (isAuthenticated) {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
+  component: Index,
 });
 
-function Home() {
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">SalitreX</h1>
-      <p>Bienvenido a la aplicación</p>
-    </div>
-  );
+function Index() {
+  return null;
 }
