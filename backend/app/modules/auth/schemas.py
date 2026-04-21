@@ -26,7 +26,12 @@ class AuthUser(BaseModel):
 
 class AuthResponse(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str
     name: str
     email: EmailStr
     role: UserRole
+
+class TokenRefreshResponse(BaseModel):
+    access_token: str
+    token_type: str

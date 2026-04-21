@@ -14,6 +14,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 
 export interface AuthResponse {
   access_token: string;
+  refresh_token: string;
   token_type: string;
   name: string;
   email: string;

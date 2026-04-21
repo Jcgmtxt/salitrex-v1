@@ -1,8 +1,11 @@
 from app.modules.auth.repository import UserRepository
 from app.modules.auth.schemas import CreateUser, UpdateUser, AuthResponse
-from app.core.security import verify_password, create_access_token
-from fastapi import HTTPException
+from app.core.security import verify_password, create_access_token, create_refresh_token
+from app.core.config import settings
+from fastapi import HTTPException, status
+from jose import JWTError, jwt
 from sqlmodel.orm.session import Session
+
 
 class AuthService:
     def __init__(self, db: Session):
@@ -16,19 +19,45 @@ class AuthService:
 
     def login(self, form_data):
         db_user = self.repository.get_user_by_email(form_data.username)
-        if not db_user:
-            raise HTTPException(status_code=404, detail="User not found")
-        if not verify_password(form_data.password, db_user.hashed_password):
-            raise HTTPException(status_code=401, detail="Incorrect password")
-        
-        access_token = create_access_token(data={"sub": db_user.email})
+        if not db_user or not verify_password(form_data.password, db_user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Credenciales inválidas",
+            )
+
+        token_data = {"sub": db_user.email}
+        access_token = create_access_token(data=token_data)
+        refresh_token = create_refresh_token(data=token_data)
+
         return AuthResponse(
             access_token=access_token,
+            refresh_token=refresh_token,
             token_type="bearer",
             name=db_user.name,
             email=db_user.email,
-            role=db_user.role
+            role=db_user.role,
         )
+
+    def refresh_access_token(self, refresh_token: str) -> str:
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token inválido o expirado",
+        )
+        try:
+            payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+            if payload.get("type") != "refresh":
+                raise credentials_exception
+            email: str = payload.get("sub")
+            if email is None:
+                raise credentials_exception
+        except JWTError:
+            raise credentials_exception
+
+        user = self.repository.get_user_by_email(email)
+        if user is None or not user.is_active:
+            raise credentials_exception
+
+        return create_access_token(data={"sub": email})
 
     def get_active_users(self):
         return self.repository.get_active_users()

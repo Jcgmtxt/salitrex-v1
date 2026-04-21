@@ -7,10 +7,7 @@ export const Route = createFileRoute("/")({
     if (isAuthenticated) {
       throw redirect({ to: "/dashboard" });
     }
+    throw redirect({ to: "/login" });
   },
-  component: Index,
+  component: () => null,
 });
-
-function Index() {
-  return null;
-}
