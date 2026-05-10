@@ -30,6 +30,8 @@ interface DataLayoutProps<T> {
     onAction?: () => void;
   };
 
+  headerAction?: React.ReactNode;
+
   // Renderers (para desktop y mobile)
   children: React.ReactNode;
 }
@@ -47,6 +49,7 @@ export function DataLayout<T>({
   currentPage,
   searchPlaceholder = "Buscar...",
   emptyState,
+  headerAction,
   children,
 }: DataLayoutProps<T>) {
   const limit = params.limit || 20;
@@ -62,7 +65,7 @@ export function DataLayout<T>({
 
   return (
     <div className="space-y-4">
-      {/* Search Bar */}
+      {/* Header: Search + Actions */}
       <div className="flex items-center gap-3">
         <SearchInput
           value={params.query || ""}
@@ -75,6 +78,7 @@ export function DataLayout<T>({
             {total} resultado{total !== 1 ? "s" : ""}
           </span>
         )}
+        <div className="ml-auto">{headerAction}</div>
       </div>
 
       {isLoading ? (

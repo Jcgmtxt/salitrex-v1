@@ -1,7 +1,9 @@
 import { useClients } from "../hooks/use-clients";
-import { UserPlus } from "lucide-react";
-import { ClientsTable } from "./ClientsTable";
-import { ClientsMobileList } from "./ClientsMobileList";
+import { UserPlus, Plus } from "lucide-react";
+import { Button } from "@/shared/components/ui/button";
+import { ClientsTable } from "@/features/crm/components/ClientsTable";
+import { ClientsMobileList } from "@/features/crm/components/ClientsMobileList";
+import { ClientDialog } from "@/features/crm/components/ClientDialog";
 import { useListParams } from "@/shared/hooks/use-list-params";
 import { DataLayout } from "@/shared/components/data-view/DataLayout";
 
@@ -30,8 +32,15 @@ export function ClientsList() {
                 title: "No hay clientes",
                 description: "Aún no has registrado ningún cliente. Registra tu primer cliente para comenzar a gestionar sus vehículos.",
                 actionLabel: "Registrar primer cliente",
-                onAction: () => console.log("Registrar cliente"), // WIP para HU-06
             }}
+            headerAction={
+                <ClientDialog>
+                    <Button className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Nuevo Cliente
+                    </Button>
+                </ClientDialog>
+            }
         >
             <ClientsTable clients={clients} />
             <ClientsMobileList clients={clients} />

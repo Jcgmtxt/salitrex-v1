@@ -9,11 +9,12 @@ import {
     TableRow,
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
-import { Car, X } from "lucide-react";
+import { Car, X, Plus } from "lucide-react";
 import type { Client } from "../types";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
+import { CarDialog } from "./CarDialog";
 
 interface Props {
     clients: Client[];
@@ -73,7 +74,7 @@ export function ClientsTable({ clients }: Props) {
                 </Table>
             </div>
 
-            {/* Panel Lateral Integrado (Solo visible si hay un cliente seleccionado) */}
+            {/* Panel Lateral Integrado */}
             {selectedClient && (
                 <div className="w-1/3 shrink-0 rounded-xl border border-white/[0.08] bg-[#0a0a0f] overflow-hidden flex flex-col h-[calc(100vh-12rem)] sticky top-6">
                     <div className="p-4 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
@@ -83,14 +84,25 @@ export function ClientsTable({ clients }: Props) {
                                 Vehículos ({selectedClient.cars?.length || 0})
                             </p>
                         </div>
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/[0.08]"
-                            onClick={() => setSelectedClient(null)}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-1">
+                            <CarDialog clientId={selectedClient.id} clientName={selectedClient.name}>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-8 w-8 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                </Button>
+                            </CarDialog>
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/[0.08]"
+                                onClick={() => setSelectedClient(null)}
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </div>
                     </div>
                     
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -119,7 +131,17 @@ export function ClientsTable({ clients }: Props) {
                         ) : (
                             <div className="text-center py-10 text-zinc-500 flex flex-col items-center">
                                 <Car className="h-10 w-10 mb-3 opacity-20" />
-                                <p className="text-sm">No hay vehículos registrados para este cliente.</p>
+                                <p className="text-sm mb-4">No hay vehículos registrados.</p>
+                                <CarDialog clientId={selectedClient.id} clientName={selectedClient.name}>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
+                                    >
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Agregar vehículo
+                                    </Button>
+                                </CarDialog>
                             </div>
                         )}
                     </div>
