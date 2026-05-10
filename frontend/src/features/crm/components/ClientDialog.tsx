@@ -9,22 +9,30 @@ import {
 } from "@/shared/components/ui/dialog";
 import { ClientForm } from "@/features/crm/forms/ClientForm";
 import { useCRMMutations } from "@/features/crm/hooks/use-crm-mutations";
-import type { ClientInput } from "@/features/crm/types";
+import type { Client, ClientInput } from "@/features/crm/types";
 
 interface Props {
     children: React.ReactNode;
+    client?: Client;
 }
 
 // TODO: fix ui to create client
 
-export function ClientDialog({ children }: Props) {
+export function ClientDialog({ children, client }: Props) {
     const [open, setOpen] = useState(false);
-    const { createClient } = useCRMMutations();
+    const { createClient, updateClient } = useCRMMutations();
 
     const handleSubmit = (data: ClientInput) => {
-        createClient.mutate(data, {
-            onSuccess: () => setOpen(false),
-        });
+        if (client) {
+            updateClient.mutate(
+                { id: client.id, data },
+                { onSuccess: () => setOpen(false) }
+            );
+        } else {
+            createClient.mutate(data, {
+                onSuccess: () => setOpen(false),
+            });
+        }
     };
 
     return (
@@ -32,14 +40,25 @@ export function ClientDialog({ children }: Props) {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="bg-[#0a0a0f] border-white/[0.08] sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle className="text-white">Nuevo Cliente</DialogTitle>
+                    <DialogTitle className="text-white">
+                        {client ? "Editar Cliente" : "Nuevo Cliente"}
+                    </DialogTitle>
                     <DialogDescription className="text-zinc-500">
-                        Llena los datos del cliente para registrarlo en el sistema.
+                        {client 
+                            ? "Modifica los datos del cliente." 
+                            : "Llena los datos del cliente para registrarlo en el sistema."}
                     </DialogDescription>
                 </DialogHeader>
                 <ClientForm
                     onSubmit={handleSubmit}
-                    isPending={createClient.isPending}
+                    isPending={createClient.isPending || updateClient.isPending}
+                    defaultValues={client ? {
+                        name: client.name,
+                        document_type: client.document_type as ClientInput["document_type"],
+                        identity_number: client.identity_number,
+                        email: client.email || "",
+                        phone: client.phone,
+                    } : undefined}
                 />
             </DialogContent>
         </Dialog>

@@ -9,7 +9,7 @@ import {
     TableRow,
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
-import { Car, X, Plus } from "lucide-react";
+import { Car, X, Plus, ExternalLink } from "lucide-react";
 import type { Client } from "../types";
 import { Card, CardContent } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
@@ -42,15 +42,16 @@ export function ClientsTable({ clients }: Props) {
                     </TableHeader>
                     <TableBody>
                         {clients.map((client) => (
-                            <TableRow 
-                                key={client.id} 
+                            <TableRow
+                                key={client.id}
                                 className={cn(
                                     "border-white/[0.08] cursor-pointer transition-colors",
-                                    selectedClient?.id === client.id 
-                                        ? "bg-indigo-500/10 hover:bg-indigo-500/15" 
+                                    selectedClient?.id === client.id
+                                        ? "bg-indigo-500/10 hover:bg-indigo-500/15"
                                         : "hover:bg-white/[0.04]"
                                 )}
                                 onClick={() => setSelectedClient(client)}
+                                onDoubleClick={() => navigate({ to: `/clients/${client.id}` })}
                             >
                                 <TableCell className="font-medium text-zinc-200">
                                     <div className="flex flex-col">
@@ -77,39 +78,52 @@ export function ClientsTable({ clients }: Props) {
             {/* Panel Lateral Integrado */}
             {selectedClient && (
                 <div className="w-1/3 shrink-0 rounded-xl border border-white/[0.08] bg-[#0a0a0f] overflow-hidden flex flex-col h-[calc(100vh-12rem)] sticky top-6">
-                    <div className="p-4 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
-                        <div>
-                            <h3 className="font-semibold text-white text-lg leading-tight">{selectedClient.name}</h3>
-                            <p className="text-sm text-zinc-400">
-                                Vehículos ({selectedClient.cars?.length || 0})
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <CarDialog clientId={selectedClient.id} clientName={selectedClient.name}>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-500/10"
-                                >
-                                    <Plus className="h-4 w-4" />
-                                </Button>
-                            </CarDialog>
-                            <Button 
-                                variant="ghost" 
-                                size="icon" 
+                    <div className="p-4 border-b border-white/[0.08] flex flex-col gap-3 bg-white/[0.02]">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="font-semibold text-white text-lg leading-tight">{selectedClient.name}</h3>
+                                <p className="text-sm text-zinc-400">
+                                    Vehículos ({selectedClient.cars?.length || 0})
+                                </p>
+                            </div>
+                            <Button
+                                variant="ghost"
+                                size="icon"
                                 className="h-8 w-8 text-zinc-400 hover:text-white hover:bg-white/[0.08]"
                                 onClick={() => setSelectedClient(null)}
                             >
                                 <X className="h-4 w-4" />
                             </Button>
                         </div>
+
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                className="flex-1 bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200"
+                                onClick={() => navigate({ to: `/clients/${selectedClient.id}` })}
+                            >
+                                <ExternalLink className="h-4 w-4 mr-2" />
+                                Ver Cliente
+                            </Button>
+                            <CarDialog clientId={selectedClient.id} clientName={selectedClient.name}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="flex-1 border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    Nuevo Vehículo
+                                </Button>
+                            </CarDialog>
+                        </div>
                     </div>
-                    
+
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {selectedClient.cars && selectedClient.cars.length > 0 ? (
                             selectedClient.cars.map((car) => (
-                                <Card 
-                                    key={car.id} 
+                                <Card
+                                    key={car.id}
                                     className="border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] transition-colors cursor-pointer shadow-none"
                                     onClick={() => navigate({ to: `/cars/${car.id}` as any })}
                                 >

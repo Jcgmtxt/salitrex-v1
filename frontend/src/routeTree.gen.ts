@@ -17,6 +17,9 @@ import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedPaintIndexRouteImport } from './routes/_authenticated/paint/index'
 import { Route as AuthenticatedIncomeIndexRouteImport } from './routes/_authenticated/income/index'
 import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
+import { Route as AuthenticatedCarsIndexRouteImport } from './routes/_authenticated/cars/index'
+import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
+import { Route as AuthenticatedCarsCarsIdRouteImport } from './routes/_authenticated/cars/$carsId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -60,11 +63,30 @@ const AuthenticatedClientsIndexRoute =
     path: '/clients/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCarsIndexRoute = AuthenticatedCarsIndexRouteImport.update({
+  id: '/cars/',
+  path: '/cars/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedClientsClientIdRoute =
+  AuthenticatedClientsClientIdRouteImport.update({
+    id: '/clients/$clientId',
+    path: '/clients/$clientId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCarsCarsIdRoute = AuthenticatedCarsCarsIdRouteImport.update({
+  id: '/cars/$carsId',
+  path: '/cars/$carsId',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/cars/': typeof AuthenticatedCarsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
   '/income/': typeof AuthenticatedIncomeIndexRoute
   '/paint/': typeof AuthenticatedPaintIndexRoute
@@ -74,6 +96,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/cars': typeof AuthenticatedCarsIndexRoute
   '/clients': typeof AuthenticatedClientsIndexRoute
   '/income': typeof AuthenticatedIncomeIndexRoute
   '/paint': typeof AuthenticatedPaintIndexRoute
@@ -85,6 +110,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/_authenticated/cars/': typeof AuthenticatedCarsIndexRoute
   '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/income/': typeof AuthenticatedIncomeIndexRoute
   '/_authenticated/paint/': typeof AuthenticatedPaintIndexRoute
@@ -96,6 +124,9 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
+    | '/cars/$carsId'
+    | '/clients/$clientId'
+    | '/cars/'
     | '/clients/'
     | '/income/'
     | '/paint/'
@@ -105,6 +136,9 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
+    | '/cars/$carsId'
+    | '/clients/$clientId'
+    | '/cars'
     | '/clients'
     | '/income'
     | '/paint'
@@ -115,6 +149,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
+    | '/_authenticated/cars/$carsId'
+    | '/_authenticated/clients/$clientId'
+    | '/_authenticated/cars/'
     | '/_authenticated/clients/'
     | '/_authenticated/income/'
     | '/_authenticated/paint/'
@@ -185,11 +222,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/cars/': {
+      id: '/_authenticated/cars/'
+      path: '/cars'
+      fullPath: '/cars/'
+      preLoaderRoute: typeof AuthenticatedCarsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/clients/$clientId': {
+      id: '/_authenticated/clients/$clientId'
+      path: '/clients/$clientId'
+      fullPath: '/clients/$clientId'
+      preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cars/$carsId': {
+      id: '/_authenticated/cars/$carsId'
+      path: '/cars/$carsId'
+      fullPath: '/cars/$carsId'
+      preLoaderRoute: typeof AuthenticatedCarsCarsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedCarsCarsIdRoute: typeof AuthenticatedCarsCarsIdRoute
+  AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
+  AuthenticatedCarsIndexRoute: typeof AuthenticatedCarsIndexRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
   AuthenticatedIncomeIndexRoute: typeof AuthenticatedIncomeIndexRoute
   AuthenticatedPaintIndexRoute: typeof AuthenticatedPaintIndexRoute
@@ -198,6 +259,9 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedCarsCarsIdRoute: AuthenticatedCarsCarsIdRoute,
+  AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
+  AuthenticatedCarsIndexRoute: AuthenticatedCarsIndexRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
   AuthenticatedIncomeIndexRoute: AuthenticatedIncomeIndexRoute,
   AuthenticatedPaintIndexRoute: AuthenticatedPaintIndexRoute,

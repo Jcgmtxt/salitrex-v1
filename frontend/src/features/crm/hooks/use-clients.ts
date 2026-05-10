@@ -9,3 +9,11 @@ export function useClients(params?: ListQueryParams) {
         placeholderData: keepPreviousData,
     });
 }
+
+export function useClient(id: number) {
+    return useQuery({
+        queryKey: ["clients", id],
+        queryFn: () => CRMService.getClientById(id),
+        enabled: !!id,
+    });
+}
