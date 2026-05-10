@@ -7,6 +7,8 @@ GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 RED='\033[0;31m'
+MAGENTA='\033[0;35m'
+BLUE='\033[0;34m'
 NC='\033[0m' # Sin color
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,26 +29,48 @@ fi
 
 # Función para matar procesos hijos al salir (Ctrl+C)
 cleanup() {
+  trap - SIGINT SIGTERM # Evitar recursión infinita
   echo -e "\n${YELLOW}[dev]${NC} Deteniendo servidores..."
   kill 0
   exit 0
 }
 trap cleanup SIGINT SIGTERM
 
+# Función para liberar puertos
+free_port() {
+  local port=$1
+  if command -v fuser >/dev/null 2>&1; then
+    if fuser $port/tcp >/dev/null 2>&1; then
+      echo -e "${YELLOW}[dev]${NC} Puerto $port ocupado. Terminando procesos..."
+      fuser -k -9 $port/tcp >/dev/null 2>&1
+      sleep 1
+    fi
+  elif command -v lsof >/dev/null 2>&1; then
+    local pids=$(lsof -t -i:$port 2>/dev/null)
+    if [ ! -z "$pids" ]; then
+      echo -e "${YELLOW}[dev]${NC} Puerto $port ocupado. Terminando procesos..."
+      kill -9 $pids 2>/dev/null
+      sleep 1
+    fi
+  fi
+}
+
 # Backend
-echo -e "${GREEN}[backend]${NC} Iniciando uvicorn..."
+free_port 8000
+echo -e "${MAGENTA}[backend]${NC} Iniciando uvicorn..."
 (
   source "$VENV_PATH"
   cd "$BACKEND_DIR"
-  uvicorn app.main:app --reload
+  uvicorn app.main:app --reload --use-colors 2>&1 | awk -v prefix="\033[0;35m[back]\033[0m " '{print prefix $0; fflush()}'
 ) &
 BACKEND_PID=$!
 
 # Frontend
-echo -e "${GREEN}[frontend]${NC} Iniciando bun dev..."
+free_port 5173
+echo -e "${BLUE}[frontend]${NC} Iniciando bun dev..."
 (
   cd "$FRONTEND_DIR"
-  bun run dev
+  FORCE_COLOR=1 bun run dev 2>&1 | awk -v prefix="\033[0;34m[front]\033[0m " '{print prefix $0; fflush()}'
 ) &
 FRONTEND_PID=$!
 
