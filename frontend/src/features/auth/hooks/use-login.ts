@@ -36,7 +36,7 @@ export function useLogin() {
         },
     });
 
-    const onSubmit = form.handleSubmit((values) => mutation.mutate(values));
+    const onSubmit = form.handleSubmit((values: LoginFormValues) => mutation.mutate(values));
 
     return {
         form,

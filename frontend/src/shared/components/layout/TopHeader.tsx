@@ -1,5 +1,6 @@
-import { LogOut, Wrench } from "lucide-react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { LogOut, Wrench, ChevronRight } from "lucide-react";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
+import { NAVIGATION_ITEMS } from "@/shared/config/navigation";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,6 +16,12 @@ import { useAuthStore } from "@/features/auth/store";
 export function TopHeader() {
     const { name, email, role, clearAuth } = useAuthStore();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const currentNavItem = NAVIGATION_ITEMS.find((item) =>
+        location.pathname.startsWith(item.to)
+    );
+    const CurrentIcon = currentNavItem?.icon;
 
     const handleLogout = () => {
         clearAuth();
@@ -40,8 +47,28 @@ export function TopHeader() {
                 <span className="font-semibold text-white">Salitrex</span>
             </div>
 
-            {/* Espaciador para centrar en Desktop si fuera necesario, o alinear a la derecha */}
-            <div className="hidden md:flex flex-1" />
+            {/* Espaciador y Breadcrumb en Desktop */}
+            <div className="hidden md:flex flex-1 items-center px-4">
+                {currentNavItem && (
+                    <div className="flex items-center gap-2 text-sm text-zinc-500">
+                        <Link 
+                            to="/dashboard" 
+                            className="hover:text-indigo-400 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-sm"
+                            title="Ir al Dashboard"
+                        >
+                            <Wrench className="h-4 w-4" />
+                        </Link>
+                        <ChevronRight className="h-4 w-4 opacity-50" />
+                        <Link 
+                            to={currentNavItem.to}
+                            className="flex items-center gap-2 font-medium text-white bg-white/[0.04] px-2.5 py-1 rounded-md border border-white/[0.08] hover:bg-white/[0.08] transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                        >
+                            {CurrentIcon && <CurrentIcon className="h-3.5 w-3.5 text-indigo-400" />}
+                            {currentNavItem.name}
+                        </Link>
+                    </div>
+                )}
+            </div>
 
             {/* User Menu */}
             <div className="flex items-center gap-4 ml-auto">
