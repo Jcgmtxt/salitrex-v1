@@ -32,14 +32,14 @@ export const useAuthStore = create<AuthStore>()(
                 try {
                     localStorage.removeItem('auth-store');
                 } catch {
+                    //TODO: Agregar un log para saber el error
                     // Entorno sin localStorage (tests, SSR)
                 }
             },
         }),
         {
             name: 'auth-store',
-            // Solo persistir el token; los datos del usuario se rehidratan en cada sesión.
-            partialize: (state) => ({ token: state.token }),
+            // Persistimos todo el estado para no perder el rol al recargar
         },
     ),
 );

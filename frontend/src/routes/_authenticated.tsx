@@ -1,14 +1,7 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { useAuthStore } from "@/features/auth/store";
+import { AppShell } from "@/shared/components/layout/AppShell";
 
-/**
- * Layout route de protección de autenticación.
- *
- * Todas las rutas anidadas bajo _authenticated/ (dashboard, clients, etc.)
- * heredarán esta protección automáticamente.
- *
- * HU-02 añadirá el shell (sidebar/bottom nav) como componente de este layout.
- */
 export const Route = createFileRoute("/_authenticated")({
     beforeLoad: () => {
         const token = useAuthStore.getState().token;
@@ -16,5 +9,9 @@ export const Route = createFileRoute("/_authenticated")({
             throw redirect({ to: "/login" });
         }
     },
-    component: () => <Outlet />,
+    component: () => (
+        <AppShell>
+            <Outlet />
+        </AppShell>
+    ),
 });
