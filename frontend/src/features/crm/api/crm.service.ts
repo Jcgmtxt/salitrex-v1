@@ -1,11 +1,11 @@
 import { apiClient } from "@/shared/api/client";
 import type { Client } from "../types";
-
+import type { PaginatedResponse, ListQueryParams } from "@/shared/types/pagination";
 
 export class CRMService {
     // Clients
-    static async getClients(): Promise<Client[]> {
-        const response = await apiClient.get<Client[]>("crm/clients/");
+    static async getClients(params?: ListQueryParams): Promise<PaginatedResponse<Client>> {
+        const response = await apiClient.get<PaginatedResponse<Client>>("crm/clients/", { params });
         return response.data;
     }
 
