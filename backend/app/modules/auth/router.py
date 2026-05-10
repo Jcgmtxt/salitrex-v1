@@ -7,6 +7,8 @@ from app.core.database import get_db
 from app.modules.auth.schemas import CreateUser, UpdateUser, AuthResponse, TokenRefreshResponse, UserResponse
 from app.modules.auth.services import AuthService
 from app.modules.auth.dependencies import get_admin_user, get_current_active_user
+from app.core.schemas import PaginatedResponse
+from fastapi import Query
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -65,10 +67,15 @@ def logout(response: Response):
     response.delete_cookie(key=REFRESH_COOKIE_NAME, path="/api/v1/auth")
 
 
-@router.get("/users", response_model=list[UserResponse], dependencies=[Depends(get_admin_user)])
-def get_users(db: Session = Depends(get_db)):
+@router.get("/users", response_model=PaginatedResponse[UserResponse], dependencies=[Depends(get_admin_user)])
+def get_users(
+    query: str | None = Query(None, description="Buscar por nombre o correo"),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
     service = AuthService(db)
-    return service.get_active_users()
+    return service.get_active_users(query=query, offset=offset, limit=limit)
 
 
 @router.put("/users/{user_id}", response_model=UserResponse, dependencies=[Depends(get_current_active_user)])

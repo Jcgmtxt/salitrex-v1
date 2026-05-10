@@ -61,8 +61,33 @@ class UserRepository:
     def get_user_by_email(self, email: str)-> UserResponse:
         return self.db.query(User).filter(User.email == email).first()
 
-    def get_active_users(self)-> List[UserResponse]:
-        return self.db.query(User).filter(User.is_active == True).all()
+    def get_active_users(
+        self,
+        query: str | None = None,
+        offset: int = 0,
+        limit: int = 20
+    ) -> tuple[List[User], int]:
+        from sqlmodel import select
+        from sqlalchemy import or_, func
+        
+        statement = select(User).where(User.is_active == True)
+        
+        if query and query.strip():
+            q = f"%{query.strip()}%"
+            statement = statement.where(
+                or_(
+                    User.name.ilike(q),
+                    User.email.ilike(q)
+                )
+            )
+            
+        count_stmt = select(func.count()).select_from(statement.subquery())
+        total = self.db.exec(count_stmt).one()
+        
+        statement = statement.order_by(User.id.desc()).offset(offset).limit(limit)
+        results = self.db.exec(statement).all()
+        
+        return results, total
 
     def delete_user(self, user_id: int) -> None:
         user = self.db.get(User, user_id)

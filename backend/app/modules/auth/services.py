@@ -59,8 +59,21 @@ class AuthService:
 
         return create_access_token(data={"sub": email})
 
-    def get_active_users(self):
-        return self.repository.get_active_users()
+    def get_active_users(
+        self,
+        query: str | None = None,
+        offset: int = 0,
+        limit: int = 20
+    ) -> dict:
+        users, total = self.repository.get_active_users(
+            query=query, offset=offset, limit=limit
+        )
+        return {
+            "items": users,
+            "total": total,
+            "offset": offset,
+            "limit": limit
+        }
 
     def update_user(self, id: int, user: UpdateUser):
         return self.repository.update_user(id, user)

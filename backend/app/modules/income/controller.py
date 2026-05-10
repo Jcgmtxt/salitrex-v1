@@ -8,6 +8,7 @@ from app.modules.income.schemas import IncomeRead, IncomeReadWithDetails, Income
 from app.modules.income.models import PhotoCategory
 from app.modules.auth.dependencies import get_current_active_user
 from app.modules.auth.models import User
+from app.core.schemas import PaginatedResponse
 import json
 
 router = APIRouter(prefix="/income", tags=["Income"])
@@ -46,16 +47,16 @@ async def create_income(
         user_id=current_user.id
     )
 
-@router.get("/", response_model=List[IncomeReadWithDetails])
+@router.get("/", response_model=PaginatedResponse[IncomeReadWithDetails])
 def list_incomes(
-    skip: int = 0,
-    limit: int = 100,
-    client_name: Optional[str] = Query(None),
+    query: Optional[str] = Query(None, description="Buscar por placa o cliente"),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
     created_by: Optional[int] = Query(None),
     db: Session = Depends(get_db)
 ):
     service = IncomeService(db)
-    return service.get_incomes(skip=skip, limit=limit, client_name=client_name, created_by=created_by)
+    return service.get_incomes(query=query, offset=offset, limit=limit, created_by=created_by)
 
 @router.get("/{income_id}", response_model=IncomeReadWithDetails)
 def get_income(income_id: int, db: Session = Depends(get_db)):

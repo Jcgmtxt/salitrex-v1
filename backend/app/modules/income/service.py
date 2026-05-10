@@ -68,14 +68,21 @@ class IncomeService:
         return incomes
 
     def get_incomes(
-        self, 
-        skip: int = 0, 
-        limit: int = 100, 
-        client_name: Optional[str] = None,
+        self,
+        query: Optional[str] = None,
+        offset: int = 0,
+        limit: int = 20,
         created_by: Optional[int] = None
-    ) -> List[Income]:
-        incomes = self.repository.get_incomes(skip=skip, limit=limit, client_name=client_name, created_by=created_by)
-        return self._add_presigned_urls(incomes)
+    ) -> dict:
+        incomes, total = self.repository.get_incomes(
+            query=query, offset=offset, limit=limit, created_by=created_by
+        )
+        return {
+            "items": self._add_presigned_urls(incomes),
+            "total": total,
+            "offset": offset,
+            "limit": limit
+        }
 
     def get_income_by_id(self, income_id: int) -> Optional[Income]:
         income = self.repository.get_income_by_id(income_id)
