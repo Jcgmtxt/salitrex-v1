@@ -29,6 +29,11 @@ export class CRMService {
     }
 
     // Cars
+    static async getCars(params?: ListQueryParams): Promise<PaginatedResponse<Car>> {
+        const response = await apiClient.get<PaginatedResponse<Car>>("crm/cars/", { params });
+        return response.data;
+    }
+
     static async createCar(data: CreateCarPayload): Promise<Car> {
         const response = await apiClient.post<Car>("crm/cars/", data);
         return response.data;
