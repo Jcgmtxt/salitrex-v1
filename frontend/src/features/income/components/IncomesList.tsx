@@ -5,9 +5,10 @@ import { IncomesMobileList } from "./IncomesMobileList";
 import { useListParams } from "@/shared/hooks/use-list-params";
 import { DataLayout } from "@/shared/components/data-view/DataLayout";
 import { Button } from "@/shared/components/ui/button";
-import { toast } from "sonner";
+import { useNavigate } from "@tanstack/react-router";
 
 export function IncomesList() {
+    const navigate = useNavigate();
     const listParams = useListParams();
     const { data, isLoading, error, isPlaceholderData } = useIncomes(listParams.params);
 
@@ -15,7 +16,7 @@ export function IncomesList() {
     const total = data?.total ?? 0;
 
     const handleNewIncome = () => {
-        toast.info("El registro de nuevas entradas estará disponible próximamente en la HU-15.");
+        navigate({ to: "/income/new" });
     };
 
     return (
