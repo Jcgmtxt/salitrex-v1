@@ -41,6 +41,8 @@ class CarUpdate(BaseModel):
     model: Optional[str] = None
     year: Optional[int] = None
     color: Optional[str] = None
+    size: Optional[VehicleSize] = None
+    client_id: Optional[int] = None
 
 # Read/Response Schemas
 class CarResponse(CarsBase):

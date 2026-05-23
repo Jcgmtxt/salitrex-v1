@@ -43,5 +43,18 @@ export function useCRMMutations() {
         },
     });
 
-    return { createClient, updateClient, createCar };
+    const updateCar = useMutation({
+        mutationFn: ({ id, data }: { id: number; data: Partial<CreateCarPayload> }) =>
+            CRMService.updateCar(id, data),
+        onSuccess: () => {
+            toast.success("Vehículo actualizado con éxito");
+            invalidateClients();
+            queryClient.invalidateQueries({ queryKey: ["cars"] });
+        },
+        onError: (error: Error & { response?: { data?: { detail?: string } } }) => {
+            toast.error(error.response?.data?.detail || "Error al actualizar vehículo");
+        },
+    });
+
+    return { createClient, updateClient, createCar, updateCar };
 }

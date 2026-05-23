@@ -3,9 +3,9 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight, ArrowLeft, Edit2, Car, User, Mail, Phone, CreditCard, Calendar, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
-import { Badge } from "@/shared/components/ui/badge";
 import { ClientDialog } from "./ClientDialog";
 import { CarDialog } from "./CarDialog";
+import { CarCard } from "./CarCard";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export function ClientDetail({ clientId }: { clientId: number }) {
@@ -111,21 +111,7 @@ export function ClientDetail({ clientId }: { clientId: number }) {
                             {client.cars && client.cars.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {client.cars.map((car) => (
-                                        <div key={car.id} className="p-4 rounded-lg border border-white/[0.08] bg-white/[0.02] flex flex-col gap-2 relative group">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h4 className="font-semibold text-zinc-200">{car.brand} {car.model}</h4>
-                                                    <p className="text-sm text-zinc-400">{car.year} • {car.color}</p>
-                                                </div>
-                                                <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 bg-indigo-500/10 uppercase tracking-wider">
-                                                    {car.license_plate}
-                                                </Badge>
-                                            </div>
-                                            <div className="mt-2 text-xs text-zinc-500 flex items-center justify-between">
-                                                <span>Tamaño: {car.size}</span>
-                                                {/* Edit Car button could go here (HU-12) */}
-                                            </div>
-                                        </div>
+                                        <CarCard key={car.id} car={car} client={client} />
                                     ))}
                                 </div>
                             ) : (

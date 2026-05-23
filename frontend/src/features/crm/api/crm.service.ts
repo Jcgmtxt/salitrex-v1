@@ -1,5 +1,5 @@
 import { apiClient } from "@/shared/api/client";
-import type { Client, Car, ClientInput, CreateCarPayload } from "../types";
+import type { Client, Car, ClientInput, CreateCarPayload, UpdateCarPayload } from "../types";
 import type { PaginatedResponse, ListQueryParams } from "@/shared/types/pagination";
 
 export class CRMService {
@@ -39,7 +39,7 @@ export class CRMService {
         return response.data;
     }
 
-    static async updateCar(id: number, data: Partial<CreateCarPayload>): Promise<Car> {
+    static async updateCar(id: number, data: UpdateCarPayload): Promise<Car> {
         const response = await apiClient.put<Car>(`crm/cars/${id}`, data);
         return response.data;
     }

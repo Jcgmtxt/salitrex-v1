@@ -7,7 +7,7 @@ export interface Car {
     model: string;
     year: number;
     color: string;
-    size: string;
+    size: "small" | "medium" | "large" | "extra_large";
     client_id: number;
     client_name?: string;
     created_at: string;
@@ -69,9 +69,11 @@ export const carSchema = z.object({
     size: z.enum(["small", "medium", "large", "extra_large"], {
         message: "Selecciona un tamaño",
     }),
+    client_id: z.coerce.number().min(1, "Debe ser un ID válido").optional(),
 });
 
 export type ClientInput = z.infer<typeof clientSchema>;
 export type CarInput = z.infer<typeof carSchema>;
 
-export type CreateCarPayload = CarInput & { client_id: number };
+export type CreateCarPayload = Omit<CarInput, "client_id"> & { client_id: number };
+export type UpdateCarPayload = Partial<CarInput>;

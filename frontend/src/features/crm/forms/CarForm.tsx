@@ -12,14 +12,17 @@ import {
     SelectValue,
 } from "@/shared/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { useClients, useClient } from "@/features/crm/hooks/use-clients";
+import { useState } from "react";
 
 interface Props {
     onSubmit: (data: CarInput) => void;
     isPending: boolean;
     defaultValues?: Partial<CarInput>;
+    isAdmin?: boolean;
 }
 
-export function CarForm({ onSubmit, isPending, defaultValues }: Props) {
+export function CarForm({ onSubmit, isPending, defaultValues, isAdmin }: Props) {
     const {
         register,
         handleSubmit,
@@ -123,6 +126,27 @@ export function CarForm({ onSubmit, isPending, defaultValues }: Props) {
                 {errors.size && <p className="text-xs text-red-400">{errors.size.message}</p>}
             </div>
 
+            {/* Cambiar Dueño (Solo Admin) */}
+            {isAdmin && defaultValues && (
+                <div className="space-y-2 p-3 border border-red-500/30 bg-red-500/5 rounded-lg">
+                    <Label htmlFor="client_id" className="text-zinc-300 flex items-center gap-2">
+                        ID del Dueño
+                        <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded uppercase tracking-wider font-semibold">
+                            Admin Only
+                        </span>
+                    </Label>
+                    <p className="text-xs text-zinc-500 mb-2 leading-relaxed">
+                        Modificar este ID transferirá el vehículo a otro cliente. Asegúrate de que el nuevo ID de cliente es correcto.
+                    </p>
+                    <ClientSelector 
+                        selectedId={watch("client_id")} 
+                        onChange={(id) => setValue("client_id", id, { shouldDirty: true })} 
+                    />
+                    <input type="hidden" {...register("client_id")} />
+                    {errors.client_id && <p className="text-xs text-red-400">{errors.client_id.message}</p>}
+                </div>
+            )}
+
             {/* Submit */}
             <Button
                 type="submit"
@@ -139,5 +163,48 @@ export function CarForm({ onSubmit, isPending, defaultValues }: Props) {
                 )}
             </Button>
         </form>
+    );
+}
+
+// Subcomponente para buscar y seleccionar clientes
+function ClientSelector({ selectedId, onChange }: { selectedId?: number; onChange: (id: number) => void }) {
+    const [search, setSearch] = useState("");
+    const { data: searchResults } = useClients({ query: search, limit: 10 });
+    const { data: selectedClient } = useClient(selectedId || 0);
+
+    return (
+        <div className="space-y-2 relative">
+            <div className="text-sm text-zinc-300 bg-white/[0.02] p-2 rounded-md border border-white/[0.04] flex justify-between items-center">
+                <span>Dueño seleccionado:</span>
+                <strong className="text-indigo-400 truncate max-w-[200px]">
+                    {selectedClient ? selectedClient.name : (selectedId || "Ninguno")}
+                </strong>
+            </div>
+            
+            <Input 
+                placeholder="Buscar cliente por nombre o cédula para transferir..." 
+                value={search} 
+                onChange={(e) => setSearch(e.target.value)} 
+                className="bg-white/[0.02] border-white/[0.08] text-zinc-200 placeholder:text-zinc-500"
+            />
+            
+            {search && searchResults?.items && searchResults.items.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 border border-white/[0.08] bg-[#0a0a0f] rounded-md max-h-48 overflow-y-auto shadow-xl shadow-black/50">
+                    {searchResults.items.map(client => (
+                        <div 
+                            key={client.id}
+                            className="p-2.5 text-sm text-zinc-200 hover:bg-indigo-500/20 cursor-pointer border-b border-white/[0.04] last:border-0 transition-colors"
+                            onClick={() => {
+                                onChange(client.id);
+                                setSearch(""); // Limpiar búsqueda al seleccionar
+                            }}
+                        >
+                            <div className="font-medium">{client.name}</div>
+                            <div className="text-xs text-zinc-500">{client.identity_number}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
     );
 }

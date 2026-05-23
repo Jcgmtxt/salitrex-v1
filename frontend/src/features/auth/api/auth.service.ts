@@ -13,11 +13,9 @@ export class AuthService {
         return response.data;
     }
 
-    static async refreshToken(refresh_token: string): Promise<RefreshTokenResponse> {
+    static async refreshToken(): Promise<RefreshTokenResponse> {
         const response = await apiClient.post<RefreshTokenResponse>(
-            "/auth/refresh",
-            { refresh_token },
-            { headers: { Authorization: `Bearer ${refresh_token}` } },
+            "/auth/refresh"
         );
         return response.data;
     }

@@ -23,14 +23,11 @@ export function setupAuthInterceptor(api: AxiosInstance): void {
             if (error.response?.status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
 
-                // TODO: Implementar refresh token
-                // Intentar refrescar usando el token actual como refresh_token.
-                // Si el backend maneja refresh_token separado, ajustar aquí.
                 const currentToken = useAuthStore.getState().token;
 
                 if (currentToken) {
                     try {
-                        const { access_token } = await AuthService.refreshToken(currentToken);
+                        const { access_token } = await AuthService.refreshToken();
                         useAuthStore.getState().setToken(access_token);
                         originalRequest.headers.Authorization = `Bearer ${access_token}`;
                         return api(originalRequest);
