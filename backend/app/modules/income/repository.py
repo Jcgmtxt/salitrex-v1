@@ -40,7 +40,8 @@ class IncomeRepository:
             .where(Income.id == income_id)
             .options(
                 joinedload(Income.photos),
-                joinedload(Income.car).joinedload(Cars.client)
+                joinedload(Income.car).joinedload(Cars.client),
+                joinedload(Income.paint_jobs)
             )
         )
         return self.db.exec(statement).first()
@@ -73,7 +74,8 @@ class IncomeRepository:
 
         statement = statement.order_by(Income.id.desc()).options(
             joinedload(Income.photos),
-            joinedload(Income.car).joinedload(Cars.client)
+            joinedload(Income.car).joinedload(Cars.client),
+            joinedload(Income.paint_jobs)
         ).offset(offset).limit(limit)
 
         results = self.db.exec(statement).unique().all()

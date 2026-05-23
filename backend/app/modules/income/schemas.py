@@ -46,7 +46,9 @@ class IncomeRead(IncomeBase):
     model_config = ConfigDict(from_attributes=True)
 
 from app.modules.crm.schemas import CarResponse
+from app.modules.paint.schemas import PaintJobRead
 
 class IncomeReadWithDetails(IncomeRead):
     photos: List[PhotoRead] = []
     car: Optional[CarResponse] = None
+    paint_jobs: List[PaintJobRead] = []
