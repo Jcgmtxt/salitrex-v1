@@ -18,6 +18,7 @@ import { Route as AuthenticatedPaintIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedIncomeIndexRouteImport } from './routes/_authenticated/income/index'
 import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedCarsIndexRouteImport } from './routes/_authenticated/cars/index'
+import { Route as AuthenticatedIncomeNewRouteImport } from './routes/_authenticated/income/new'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
 import { Route as AuthenticatedCarsCarsIdRouteImport } from './routes/_authenticated/cars/$carsId'
 
@@ -68,6 +69,11 @@ const AuthenticatedCarsIndexRoute = AuthenticatedCarsIndexRouteImport.update({
   path: '/cars/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedIncomeNewRoute = AuthenticatedIncomeNewRouteImport.update({
+  id: '/income/new',
+  path: '/income/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedClientsClientIdRoute =
   AuthenticatedClientsClientIdRouteImport.update({
     id: '/clients/$clientId',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/income/new': typeof AuthenticatedIncomeNewRoute
   '/cars/': typeof AuthenticatedCarsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
   '/income/': typeof AuthenticatedIncomeIndexRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/income/new': typeof AuthenticatedIncomeNewRoute
   '/cars': typeof AuthenticatedCarsIndexRoute
   '/clients': typeof AuthenticatedClientsIndexRoute
   '/income': typeof AuthenticatedIncomeIndexRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
+  '/_authenticated/income/new': typeof AuthenticatedIncomeNewRoute
   '/_authenticated/cars/': typeof AuthenticatedCarsIndexRoute
   '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/income/': typeof AuthenticatedIncomeIndexRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/cars/$carsId'
     | '/clients/$clientId'
+    | '/income/new'
     | '/cars/'
     | '/clients/'
     | '/income/'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/cars/$carsId'
     | '/clients/$clientId'
+    | '/income/new'
     | '/cars'
     | '/clients'
     | '/income'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/cars/$carsId'
     | '/_authenticated/clients/$clientId'
+    | '/_authenticated/income/new'
     | '/_authenticated/cars/'
     | '/_authenticated/clients/'
     | '/_authenticated/income/'
@@ -229,6 +241,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCarsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/income/new': {
+      id: '/_authenticated/income/new'
+      path: '/income/new'
+      fullPath: '/income/new'
+      preLoaderRoute: typeof AuthenticatedIncomeNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/clients/$clientId': {
       id: '/_authenticated/clients/$clientId'
       path: '/clients/$clientId'
@@ -250,6 +269,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedCarsCarsIdRoute: typeof AuthenticatedCarsCarsIdRoute
   AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
+  AuthenticatedIncomeNewRoute: typeof AuthenticatedIncomeNewRoute
   AuthenticatedCarsIndexRoute: typeof AuthenticatedCarsIndexRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
   AuthenticatedIncomeIndexRoute: typeof AuthenticatedIncomeIndexRoute
@@ -261,6 +281,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedCarsCarsIdRoute: AuthenticatedCarsCarsIdRoute,
   AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
+  AuthenticatedIncomeNewRoute: AuthenticatedIncomeNewRoute,
   AuthenticatedCarsIndexRoute: AuthenticatedCarsIndexRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
   AuthenticatedIncomeIndexRoute: AuthenticatedIncomeIndexRoute,

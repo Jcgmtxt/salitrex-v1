@@ -9,9 +9,11 @@ interface Props {
     placeholder?: string;
     debounceMs?: number;
     className?: string;
+    onFocus?: () => void;
+    onBlur?: () => void;
 }
 
-export function SearchInput({ value, onChange, placeholder = "Buscar...", debounceMs = 300, className }: Props) {
+export function SearchInput({ value, onChange, placeholder = "Buscar...", debounceMs = 300, className, onFocus, onBlur }: Props) {
     const [localValue, setLocalValue] = useState(value);
 
     // Sync external value changes (e.g., browser back button)
@@ -38,6 +40,8 @@ export function SearchInput({ value, onChange, placeholder = "Buscar...", deboun
                 value={localValue}
                 onChange={(e) => setLocalValue(e.target.value)}
                 placeholder={placeholder}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 className="pl-9 pr-9 bg-white/[0.02] border-white/[0.08] text-zinc-200 placeholder:text-zinc-500 focus-visible:ring-indigo-500/40"
             />
             {localValue && (

@@ -47,8 +47,6 @@ describe("CarsTable component", () => {
 
     it("ordena por placa cuando se hace click en el header de Placa", () => {
         render(<CarsTable cars={mockCars} />);
-
-        const cellsBefore = screen.getAllByRole("row").map(row => row.textContent);
         
         // Hacemos click en el header "Placa"
         const headerPlaca = screen.getByText(/Placa/i);
