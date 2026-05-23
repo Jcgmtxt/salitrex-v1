@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import {
     Table,
@@ -9,7 +9,7 @@ import {
     TableRow,
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
-import { Car as CarIcon, X, User, ExternalLink, Calendar, Info } from "lucide-react";
+import { X, User, ExternalLink, Info, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import type { Car } from "../types";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,9 +18,65 @@ interface Props {
     cars: Car[];
 }
 
+type SortField = "brand" | "license_plate" | "color" | "client_name";
+type SortOrder = "asc" | "desc" | null;
+
 export function CarsTable({ cars }: Props) {
     const navigate = useNavigate();
     const [selectedCar, setSelectedCar] = useState<Car | null>(null);
+    const [sortField, setSortField] = useState<SortField | null>(null);
+    const [sortOrder, setSortOrder] = useState<SortOrder>(null);
+
+    const handleSort = (field: SortField) => {
+        if (sortField === field) {
+            if (sortOrder === "asc") {
+                setSortOrder("desc");
+            } else if (sortOrder === "desc") {
+                setSortField(null);
+                setSortOrder(null);
+            } else {
+                setSortOrder("asc");
+            }
+        } else {
+            setSortField(field);
+            setSortOrder("asc");
+        }
+    };
+
+    const sortedCars = useMemo(() => {
+        if (!sortField || !sortOrder) return cars;
+
+        return [...cars].sort((a, b) => {
+            let valA = "";
+            let valB = "";
+
+            if (sortField === "brand") {
+                valA = `${a.brand} ${a.model}`.toLowerCase();
+                valB = `${b.brand} ${b.model}`.toLowerCase();
+            } else if (sortField === "client_name") {
+                valA = (a.client_name || "").toLowerCase();
+                valB = (b.client_name || "").toLowerCase();
+            } else {
+                valA = (a[sortField] || "").toLowerCase();
+                valB = (b[sortField] || "").toLowerCase();
+            }
+
+            if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+            if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+            return 0;
+        });
+    }, [cars, sortField, sortOrder]);
+
+    const renderSortIcon = (field: SortField) => {
+        if (sortField !== field) {
+            return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 opacity-40 hover:opacity-100 transition-opacity" />;
+        }
+        return sortOrder === "asc" ? (
+            <ArrowUp className="ml-1.5 h-3.5 w-3.5 text-indigo-400" />
+        ) : (
+            <ArrowDown className="ml-1.5 h-3.5 w-3.5 text-indigo-400" />
+        );
+    };
 
     return (
         <div className="hidden md:flex gap-4 items-start relative transition-all duration-300">
@@ -32,14 +88,42 @@ export function CarsTable({ cars }: Props) {
                 <Table>
                     <TableHeader className="bg-white/[0.02]">
                         <TableRow className="border-white/[0.08] hover:bg-transparent">
-                            <TableHead className="text-zinc-400 font-medium">Vehículo</TableHead>
-                            <TableHead className="text-zinc-400 font-medium">Placa</TableHead>
-                            <TableHead className="text-zinc-400 font-medium">Color</TableHead>
-                            <TableHead className="text-zinc-400 font-medium">Cliente</TableHead>
+                            <TableHead 
+                                className="text-zinc-400 font-medium cursor-pointer select-none hover:text-zinc-200 transition-colors"
+                                onClick={() => handleSort("brand")}
+                            >
+                                <div className="flex items-center">
+                                    Vehículo {renderSortIcon("brand")}
+                                </div>
+                            </TableHead>
+                            <TableHead 
+                                className="text-zinc-400 font-medium cursor-pointer select-none hover:text-zinc-200 transition-colors"
+                                onClick={() => handleSort("license_plate")}
+                            >
+                                <div className="flex items-center">
+                                    Placa {renderSortIcon("license_plate")}
+                                </div>
+                            </TableHead>
+                            <TableHead 
+                                className="text-zinc-400 font-medium cursor-pointer select-none hover:text-zinc-200 transition-colors"
+                                onClick={() => handleSort("color")}
+                            >
+                                <div className="flex items-center">
+                                    Color {renderSortIcon("color")}
+                                </div>
+                            </TableHead>
+                            <TableHead 
+                                className="text-zinc-400 font-medium cursor-pointer select-none hover:text-zinc-200 transition-colors"
+                                onClick={() => handleSort("client_name")}
+                            >
+                                <div className="flex items-center">
+                                    Cliente {renderSortIcon("client_name")}
+                                </div>
+                            </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {cars.map((car) => (
+                        {sortedCars.map((car) => (
                             <TableRow 
                                 key={car.id} 
                                 className={cn(
@@ -57,7 +141,7 @@ export function CarsTable({ cars }: Props) {
                                     </div>
                                 </TableCell>
                                 <TableCell className="text-zinc-300">
-                                    <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 bg-indigo-500/10 uppercase tracking-wider">
+                                    <Badge variant="outline" className="border-indigo-500/30 text-indigo-400 bg-indigo-500/10 uppercase tracking-wider font-semibold">
                                         {car.license_plate}
                                     </Badge>
                                 </TableCell>
@@ -126,7 +210,6 @@ export function CarsTable({ cars }: Props) {
                                     <span className="text-zinc-500">Año de registro</span>
                                     <span className="text-zinc-200">{new Date(selectedCar.created_at).getFullYear()}</span>
                                 </div>
-                                {/* Si luego tenemos entradas, se pueden sumar aquí */}
                             </div>
                         </div>
 
