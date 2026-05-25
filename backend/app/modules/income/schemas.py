@@ -15,6 +15,7 @@ class PhotoRead(PhotoBase):
     id: int
     income_id: int
     presigned_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -231,9 +231,9 @@ export function IncomesTable({ incomes }: Props) {
                                 <div className="grid grid-cols-2 gap-2">
                                     {selectedIncome.photos.slice(0, 4).map((photo) => (
                                         <div key={photo.id} className="relative aspect-video rounded-md border border-white/[0.08] overflow-hidden bg-zinc-950">
-                                            {photo.presigned_url ? (
+                                            {photo.thumbnail_url || photo.presigned_url ? (
                                                 <img
-                                                    src={photo.presigned_url}
+                                                    src={photo.thumbnail_url || photo.presigned_url}
                                                     alt={photo.category}
                                                     className="object-cover w-full h-full"
                                                 />

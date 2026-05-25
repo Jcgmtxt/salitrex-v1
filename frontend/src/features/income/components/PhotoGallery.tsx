@@ -66,9 +66,9 @@ export function PhotoGallery({ photos }: Props) {
                                 className="group relative aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-zinc-950 cursor-pointer shadow-lg hover:shadow-indigo-500/5 transition-all"
                                 onClick={() => setSelectedPhoto(photo)}
                             >
-                                {photo.presigned_url ? (
+                                {photo.thumbnail_url || photo.presigned_url ? (
                                     <img
-                                        src={photo.presigned_url}
+                                        src={photo.thumbnail_url || photo.presigned_url}
                                         alt={photo.category}
                                         className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
                                     />
@@ -92,9 +92,9 @@ export function PhotoGallery({ photos }: Props) {
                                 className="snap-center shrink-0 w-[80%] aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-zinc-950 relative"
                                 onClick={() => setSelectedPhoto(photo)}
                             >
-                                {photo.presigned_url ? (
+                                {photo.thumbnail_url || photo.presigned_url ? (
                                     <img
-                                        src={photo.presigned_url}
+                                        src={photo.thumbnail_url || photo.presigned_url}
                                         alt={photo.category}
                                         className="object-cover w-full h-full"
                                     />

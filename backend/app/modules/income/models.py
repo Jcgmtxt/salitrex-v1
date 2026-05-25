@@ -24,6 +24,7 @@ class Photos(SQLModel, table=True):
     
     # Non-persistent field for temporary URLs
     presigned_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
 
     income: Optional["Income"] = Relationship(back_populates="photos")
 

@@ -10,4 +10,4 @@ passlib[bcrypt]
 python-multipart
 boto3
 psycopg2-binary
-
+pillow

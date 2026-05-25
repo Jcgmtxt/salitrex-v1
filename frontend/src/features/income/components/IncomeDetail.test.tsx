@@ -18,8 +18,8 @@ const mockIncome: Income = {
     exit_date_time: null, // "En taller"
     notes: "Golpe leve en puerta trasera derecha",
     photos: [
-        { id: 1, income_id: 1, s3_key: "photo1.jpg", category: "entry", presigned_url: "https://example.com/photo1.jpg" },
-        { id: 2, income_id: 1, s3_key: "photo2.jpg", category: "process", presigned_url: "https://example.com/photo2.jpg" }
+        { id: 1, income_id: 1, s3_key: "photo1.jpg", category: "entry", presigned_url: "https://example.com/photo1.jpg", thumbnail_url: "https://example.com/photo1_thumb.jpg" },
+        { id: 2, income_id: 1, s3_key: "photo2.jpg", category: "process", presigned_url: "https://example.com/photo2.jpg", thumbnail_url: "https://example.com/photo2_thumb.jpg" }
     ],
     paint_jobs: [
         {

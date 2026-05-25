@@ -7,6 +7,35 @@ from app.modules.common.storage import storage as s3_storage
 from app.modules.income.models import Income, PhotoCategory
 import uuid
 import datetime
+import io
+import logging
+from PIL import Image
+
+logger = logging.getLogger(__name__)
+
+def get_thumbnail_key(s3_key: str) -> str:
+    if not s3_key:
+        return s3_key
+    parts = s3_key.rsplit('.', 1)
+    if len(parts) == 2:
+        return f"{parts[0]}_thumb.{parts[1]}"
+    return f"{s3_key}_thumb"
+
+def generate_thumbnail(file_content: bytes, max_size: tuple[int, int] = (800, 800), quality: int = 70) -> bytes:
+    try:
+        img = Image.open(io.BytesIO(file_content))
+        
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+            
+        img.thumbnail(max_size, Image.Resampling.LANCZOS)
+        
+        out_io = io.BytesIO()
+        img.save(out_io, format="JPEG", quality=quality, optimize=True)
+        return out_io.getvalue()
+    except Exception as e:
+        logger.error(f"Error generating thumbnail: {e}")
+        return file_content
 
 class IncomeService:
     def __init__(self, db: Session):
@@ -50,6 +79,15 @@ class IncomeService:
             )
             
             if s3_key:
+                # Generate and upload thumbnail
+                thumbnail_content = generate_thumbnail(file_content)
+                thumb_key = get_thumbnail_key(s3_key)
+                s3_storage.upload_file(
+                    file_content=thumbnail_content,
+                    object_name=thumb_key,
+                    content_type="image/jpeg"
+                )
+                
                 photos_to_create.append(PhotoCreate(s3_key=s3_key, category=category))
 
         # 4. Save photo records in DB
@@ -65,6 +103,8 @@ class IncomeService:
         for income in incomes:
             for photo in income.photos:
                 photo.presigned_url = s3_storage.get_presigned_url(photo.s3_key)
+                thumb_key = get_thumbnail_key(photo.s3_key)
+                photo.thumbnail_url = s3_storage.get_presigned_url(thumb_key)
         return incomes
 
     def get_incomes(

@@ -8,6 +8,7 @@ export interface Photo {
     s3_key: string;
     category: PhotoCategory;
     presigned_url?: string;
+    thumbnail_url?: string;
 }
 
 export interface PaintJob {
