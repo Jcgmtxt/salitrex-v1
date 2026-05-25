@@ -5,10 +5,11 @@ from typing import Optional, List, TYPE_CHECKING
 from sqlalchemy import TEXT, Column
 from datetime import datetime
 
+from app.modules.paint.models import PaintJob
+
 # Correct import for forward references
 if TYPE_CHECKING:
     from app.modules.crm.models import Cars
-    from app.modules.paint.models import PaintJob
 
 class PhotoCategory(str, Enum):
     ENTRY = "entry"
@@ -24,7 +25,14 @@ class Photos(SQLModel, table=True):
     
     # Non-persistent field for temporary URLs
     presigned_url: Optional[str] = None
-    thumbnail_url: Optional[str] = None
+
+    @property
+    def thumbnail_url(self) -> Optional[str]:
+        return getattr(self, "_thumbnail_url", None)
+
+    @thumbnail_url.setter
+    def thumbnail_url(self, value: Optional[str]):
+        self._thumbnail_url = value
 
     income: Optional["Income"] = Relationship(back_populates="photos")
 
