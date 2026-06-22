@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { Photo, PhotoCategory } from "../types";
-import { Camera, X, ZoomIn } from "lucide-react";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useCreateIncomePhoto } from "../hooks/use-incomes";
+import { PhotoGrid } from "./PhotoGrid";
+import { PhotoLightbox } from "./PhotoLightbox";
 
 interface Props {
     photos: Photo[];
+    incomeId: number;
 }
 
 const CATEGORIES: { value: PhotoCategory; label: string }[] = [
@@ -15,14 +18,49 @@ const CATEGORIES: { value: PhotoCategory; label: string }[] = [
     { value: "exit", label: "Salida" },
 ];
 
-export function PhotoGallery({ photos }: Props) {
+export function PhotoGallery({ photos, incomeId }: Props) {
     const [activeTab, setActiveTab] = useState<PhotoCategory>("entry");
     const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const uploadMutation = useCreateIncomePhoto();
 
     const filteredPhotos = photos.filter((p) => p.category === activeTab);
 
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        
+        uploadMutation.mutate({
+            incomeId,
+            file,
+            category: activeTab,
+        }, {
+            onSuccess: () => {
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+            }
+        });
+    };
+
+    const activeCategoryLabel = CATEGORIES.find(c => c.value === activeTab)?.label || "";
+
     return (
         <div className="space-y-4">
+            {/* Hidden File Input */}
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                className="hidden"
+                disabled={uploadMutation.isPending}
+            />
+
             {/* Tabs */}
             <div className="flex gap-1.5 border-b border-white/[0.08] pb-px overflow-x-auto snap-x scrollbar-none">
                 {CATEGORIES.map((cat) => {
@@ -50,96 +88,20 @@ export function PhotoGallery({ photos }: Props) {
                 })}
             </div>
 
-            {/* Photos Display (Desktop: Grid, Mobile: Horizontal scroll) */}
-            {filteredPhotos.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-white/[0.08] p-12 text-center text-zinc-500 flex flex-col items-center justify-center bg-white/[0.01]">
-                    <Camera className="h-10 w-10 mb-3 opacity-20 text-indigo-400" />
-                    <p className="text-sm">No hay fotografías registradas en esta categoría.</p>
-                </div>
-            ) : (
-                <div>
-                    {/* Grid Desktop, Horizontal Swipe Mobile */}
-                    <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {filteredPhotos.map((photo) => (
-                            <div
-                                key={photo.id}
-                                className="group relative aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-zinc-950 cursor-pointer shadow-lg hover:shadow-indigo-500/5 transition-all"
-                                onClick={() => setSelectedPhoto(photo)}
-                            >
-                                {photo.thumbnail_url || photo.presigned_url ? (
-                                    <img
-                                        src={photo.thumbnail_url || photo.presigned_url}
-                                        alt={photo.category}
-                                        className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-xs text-zinc-600">
-                                        Error de carga
-                                    </div>
-                                )}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <ZoomIn className="h-6 w-6 text-white" />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+            {/* Photos Grid */}
+            <PhotoGrid
+                photos={filteredPhotos}
+                activeCategoryLabel={activeCategoryLabel}
+                onUploadClick={handleUploadClick}
+                isPending={uploadMutation.isPending}
+                onPhotoSelect={setSelectedPhoto}
+            />
 
-                    {/* Mobile Horizontal scroll snap view */}
-                    <div className="sm:hidden flex gap-3 overflow-x-auto snap-x scrollbar-none pb-2 -mx-4 px-4">
-                        {filteredPhotos.map((photo) => (
-                            <div
-                                key={photo.id}
-                                className="snap-center shrink-0 w-[80%] aspect-video rounded-xl overflow-hidden border border-white/[0.08] bg-zinc-950 relative"
-                                onClick={() => setSelectedPhoto(photo)}
-                            >
-                                {photo.thumbnail_url || photo.presigned_url ? (
-                                    <img
-                                        src={photo.thumbnail_url || photo.presigned_url}
-                                        alt={photo.category}
-                                        className="object-cover w-full h-full"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-xs text-zinc-600">
-                                        Error de carga
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Lightbox / Modal Overlay */}
-            {selectedPhoto && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-250"
-                    onClick={() => setSelectedPhoto(null)}
-                >
-                    <button
-                        type="button"
-                        className="absolute top-4 right-4 h-10 w-10 bg-white/[0.05] hover:bg-white/[0.1] text-zinc-300 hover:text-white rounded-full flex items-center justify-center transition-colors border border-white/[0.08]"
-                        onClick={() => setSelectedPhoto(null)}
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                    
-                    <div
-                        className="relative max-w-4xl max-h-[85vh] overflow-hidden rounded-xl border border-white/[0.08]"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {selectedPhoto.presigned_url && (
-                            <img
-                                src={selectedPhoto.presigned_url}
-                                alt={selectedPhoto.category}
-                                className="object-contain w-full h-full max-h-[85vh] select-none"
-                            />
-                        )}
-                        <div className="absolute bottom-4 left-4 bg-black/75 px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs text-zinc-300 capitalize font-medium">
-                            Categoría: {selectedPhoto.category}
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Lightbox Modal */}
+            <PhotoLightbox
+                photo={selectedPhoto}
+                onClose={() => setSelectedPhoto(null)}
+            />
         </div>
     );
 }
