@@ -1,22 +1,40 @@
-import { PaintBucket } from "lucide-react";
+import { PaintBucket, Sliders } from "lucide-react";
 import type { PaintJob } from "../types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
+import { Button } from "@/shared/components/ui/button";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 interface Props {
     paintJobs?: PaintJob[];
     formatCurrency: (val: number) => string;
+    carId?: number;
 }
 
-export function IncomePaintJobs({ paintJobs, formatCurrency }: Props) {
+export function IncomePaintJobs({ paintJobs, formatCurrency, carId }: Props) {
     return (
         <Card className="bg-[#0a0a0f]/50 border-white/[0.08] backdrop-blur-md">
-            <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 gap-4">
                 <CardTitle className="text-base text-white flex items-center gap-2 font-bold">
                     <PaintBucket className="w-4.5 h-4.5 text-indigo-400" />
                     Trabajos de Pintura Asociados
                 </CardTitle>
+                {carId && (
+                    <Link
+                        to="/paint"
+                        search={{ carId }}
+                    >
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-8 border-white/[0.08] hover:bg-white/[0.05] text-zinc-300 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                        >
+                            <Sliders className="w-3.5 h-3.5 text-indigo-400" />
+                            Calcular Pintura
+                        </Button>
+                    </Link>
+                )}
             </CardHeader>
             <CardContent>
                 {paintJobs && paintJobs.length > 0 ? (
