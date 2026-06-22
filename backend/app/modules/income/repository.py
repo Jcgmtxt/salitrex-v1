@@ -1,8 +1,8 @@
 from typing import List, Optional
 from sqlmodel import Session, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy import or_
-from app.modules.income.models import Income, Photos
+from app.modules.income.models import Income, Photos, IncomeNote
 from app.modules.income.schemas import IncomeCreate, IncomeUpdate, PhotoCreate
 from app.modules.crm.models import Cars, Client
 
@@ -39,9 +39,10 @@ class IncomeRepository:
             select(Income)
             .where(Income.id == income_id)
             .options(
-                joinedload(Income.photos),
-                joinedload(Income.car).joinedload(Cars.client),
-                joinedload(Income.paint_jobs)
+                selectinload(Income.photos),
+                selectinload(Income.paint_jobs),
+                selectinload(Income.notes_log),
+                joinedload(Income.car).joinedload(Cars.client)
             )
         )
         return self.db.exec(statement).first()
@@ -73,9 +74,10 @@ class IncomeRepository:
         total = self.db.exec(count_stmt).one()
 
         statement = statement.order_by(Income.id.desc()).options(
-            joinedload(Income.photos),
-            joinedload(Income.car).joinedload(Cars.client),
-            joinedload(Income.paint_jobs)
+            selectinload(Income.photos),
+            selectinload(Income.paint_jobs),
+            selectinload(Income.notes_log),
+            joinedload(Income.car).joinedload(Cars.client)
         ).offset(offset).limit(limit)
 
         results = self.db.exec(statement).unique().all()
@@ -85,6 +87,16 @@ class IncomeRepository:
         db_income = self.db.get(Income, income_id)
         if not db_income:
             return None
+
+        if db_income.exit_date_time is not None:
+            data = income_data.model_dump(exclude_unset=True)
+            forbidden_keys = {"notes", "car_id", "income_date_time", "agreed_exit_date_time"}
+            if any(k in data for k in forbidden_keys):
+                from fastapi import HTTPException, status
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="No se puede modificar la información general de una entrada que ya ha sido entregada."
+                )
             
         data = income_data.model_dump(exclude_unset=True)
         for key, value in data.items():
@@ -106,3 +118,15 @@ class IncomeRepository:
             photos.append(photo)
         self.db.commit()
         return photos
+
+    def create_note(self, income_id: int, note_text: str, user_id: int, creator_name: str) -> IncomeNote:
+        note = IncomeNote(
+            income_id=income_id,
+            note=note_text,
+            created_by=user_id,
+            creator_name=creator_name
+        )
+        self.db.add(note)
+        self.db.commit()
+        self.db.refresh(note)
+        return note

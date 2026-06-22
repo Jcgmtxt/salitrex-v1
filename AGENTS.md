@@ -292,3 +292,15 @@ export type LoginInput = z.infer<typeof loginSchema>;
 - Types explícitos en TypeScript, type hints en Python
 - Mantener archivos pequeños y enfocados
 - Documentar decisiones no obvias con comentarios
+
+---
+
+## Habilidades y Reglas Globales Activas
+
+Para optimizar el desarrollo, la arquitectura y las pruebas en este proyecto, se aplicarán activamente por defecto las siguientes habilidades globales instaladas en el sistema:
+1. **senior-architect / senior-devops**: Diseñar y estructurar componentes reutilizables, flujos de trabajo escalables y garantizar buenas prácticas de clean code y modularidad.
+2. **senior-frontend / senior-backend**:
+   - **Frontend**: Cumplir estrictamente con tipado estricto en TypeScript, estructuración con React 19 y Shadcn/UI, y evitar "AI-slop" mediante el uso de la habilidad **hallmark**.
+   - **Backend**: Implementar buenas prácticas en FastAPI, tipado robusto con Pydantic v2 y SQLModel, y estructurar respuestas consistentes.
+3. **tdd-guide / pw (Playwright Pro)**: Utilizar un enfoque guiado por pruebas (Test-Driven Development) escribiendo primero las validaciones y pruebas E2E correspondientes.
+4. **tech-debt-tracker**: Escanear y registrar proactivamente la deuda técnica antes de realizar refactorizaciones o reestructurar código existente.

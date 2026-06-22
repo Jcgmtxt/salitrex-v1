@@ -21,6 +21,15 @@ export interface PaintJob {
     created_at: string;
 }
 
+export interface IncomeNote {
+    id: number;
+    income_id: number;
+    note: string;
+    created_at: string;
+    created_by?: number | null;
+    creator_name?: string | null;
+}
+
 export interface Income {
     id: number;
     car_id: number;
@@ -30,6 +39,7 @@ export interface Income {
     notes?: string | null;
     photos: Photo[];
     paint_jobs?: PaintJob[];
+    notes_log?: IncomeNote[];
     car?: Car | null;
     created_by?: number | null;
     created_at: string;

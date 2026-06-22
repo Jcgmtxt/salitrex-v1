@@ -52,3 +52,35 @@ export function useUpdateIncome() {
         },
     });
 }
+
+export function useCreateIncomeNote() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ incomeId, note }: { incomeId: number; note: string }) =>
+            IncomeService.addIncomeNote(incomeId, note),
+        onSuccess: (_, { incomeId }) => {
+            toast.success("Nota agregada a la bitácora con éxito.");
+            queryClient.invalidateQueries({ queryKey: ["income", incomeId] });
+        },
+        onError: (error: any) => {
+            const detail = error?.response?.data?.detail ?? "Error al agregar la nota.";
+            toast.error(detail);
+        },
+    });
+}
+
+export function useCreateIncomePhoto() {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ incomeId, file, category }: { incomeId: number; file: File; category: string }) =>
+            IncomeService.addIncomePhoto(incomeId, file, category),
+        onSuccess: (_, { incomeId }) => {
+            toast.success("Fotografía agregada con éxito.");
+            queryClient.invalidateQueries({ queryKey: ["income", incomeId] });
+        },
+        onError: (error: any) => {
+            const detail = error?.response?.data?.detail ?? "Error al subir la fotografía.";
+            toast.error(detail);
+        },
+    });
+}

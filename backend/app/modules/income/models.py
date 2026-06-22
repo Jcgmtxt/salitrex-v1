@@ -47,6 +47,7 @@ class Income(SQLModel, table=True):
 
     photos: List["Photos"] = Relationship(back_populates="income")
     paint_jobs: List["PaintJob"] = Relationship(back_populates="income")
+    notes_log: List["IncomeNote"] = Relationship(back_populates="income")
     car: Optional["Cars"] = Relationship()
 
     created_by: Optional[int] = Field(default=None, foreign_key="users.id")
@@ -55,3 +56,15 @@ class Income(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     deleted_at: Optional[datetime] = Field(default=None)
+
+class IncomeNote(SQLModel, table=True):
+    __tablename__ = "income_notes"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    income_id: int = Field(foreign_key="income.id")
+    note: str = Field(sa_column=Column(TEXT))
+    created_at: datetime = Field(default_factory=datetime.now)
+    created_by: Optional[int] = Field(default=None, foreign_key="users.id")
+    creator_name: Optional[str] = Field(default=None)
+
+    income: Optional["Income"] = Relationship(back_populates="notes_log")
+

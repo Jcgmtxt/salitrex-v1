@@ -51,6 +51,13 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id')
     )
     op.add_column('cars', sa.Column('size', sa.Enum('SMALL', 'MEDIUM', 'LARGE', 'EXTRA_LARGE', name='vehiclesize'), nullable=False))
+    
+    # Agregar valor 'FINISHED' al tipo enum 'photocategory' en PostgreSQL
+    bind = op.get_bind()
+    if bind.dialect.name == "postgresql":
+        op.execute("COMMIT")
+        op.execute("ALTER TYPE photocategory ADD VALUE IF NOT EXISTS 'FINISHED'")
+
     op.alter_column('photos', 'category',
                existing_type=sa.VARCHAR(length=7),
                type_=sa.Enum('ENTRY', 'PROCESS', 'FINISHED', 'EXIT', name='photocategory'),

@@ -4,7 +4,7 @@ from sqlmodel import Session
 from app.modules.income.repository import IncomeRepository
 from app.modules.income.schemas import IncomeCreate, IncomeUpdate, PhotoCreate
 from app.modules.common.storage import storage as s3_storage
-from app.modules.income.models import Income, PhotoCategory
+from app.modules.income.models import Income, PhotoCategory, IncomeNote, Photos
 import uuid
 import datetime
 import io
@@ -132,3 +132,54 @@ class IncomeService:
 
     def update_income(self, income_id: int, income_data: IncomeUpdate, user_id: Optional[int] = None) -> Optional[Income]:
         return self.repository.update_income(income_id, income_data, user_id=user_id)
+
+    def add_note_to_income(self, income_id: int, note_text: str, user_id: int, creator_name: str) -> IncomeNote:
+        return self.repository.create_note(income_id, note_text, user_id, creator_name)
+
+    async def add_photo_to_income(
+        self, 
+        income_id: int, 
+        file: UploadFile, 
+        category: PhotoCategory, 
+        user_id: int
+    ) -> Photos:
+        income = self.repository.get_income_by_id(income_id)
+        if not income:
+            raise ValueError("Income not found")
+            
+        from app.modules.crm.models import Cars
+        car = self.repository.db.get(Cars, income.car_id)
+        plate = car.license_plate if car else "unknown_plate"
+        
+        now = datetime.datetime.now()
+        file_content = await file.read()
+        
+        ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        object_name = f"incomes/{now.year}-{now.month:02d}-{now.day:02d}/ingreso-{income.id}_{plate}_{category.value}_{user_id}_{uuid.uuid4()}.{ext}"
+        
+        s3_key = s3_storage.upload_file(
+            file_content=file_content,
+            object_name=object_name,
+            content_type=file.content_type
+        )
+        
+        if not s3_key:
+            raise ValueError("Failed to upload file to storage")
+            
+        # Generate and upload thumbnail
+        thumbnail_content = generate_thumbnail(file_content)
+        thumb_key = get_thumbnail_key(s3_key)
+        s3_storage.upload_file(
+            file_content=thumbnail_content,
+            object_name=thumb_key,
+            content_type="image/jpeg"
+        )
+        
+        photo_create = PhotoCreate(s3_key=s3_key, category=category)
+        photos = self.repository.add_photos(income.id, [photo_create])
+        
+        # Add presigned URLs to return object
+        photo = photos[0]
+        photo.presigned_url = s3_storage.get_presigned_url(photo.s3_key)
+        photo.thumbnail_url = s3_storage.get_presigned_url(thumb_key)
+        return photo
