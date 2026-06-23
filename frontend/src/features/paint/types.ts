@@ -8,3 +8,28 @@ export interface PricingCalculation {
     min_allowed_price: number;
     min_margin_percent: number;
 }
+
+export interface PaintConfig {
+    id: number;
+    price_per_cm2: number;
+    min_margin_percent: number;
+    is_active: boolean;
+    created_at: string;
+}
+
+export interface PaintConfigCreate {
+    price_per_cm2: number;
+    min_margin_percent: number;
+    is_active: boolean;
+}
+
+export interface VehicleSizeArea {
+    id: number;
+    size: VehicleSize;
+    area_cm2: number;
+}
+
+export interface VehicleSizeAreaCreate {
+    size: VehicleSize;
+    area_cm2: number;
+}

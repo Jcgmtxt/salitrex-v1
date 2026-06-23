@@ -18,6 +18,8 @@ import { Route as AuthenticatedPaintIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedIncomeIndexRouteImport } from './routes/_authenticated/income/index'
 import { Route as AuthenticatedClientsIndexRouteImport } from './routes/_authenticated/clients/index'
 import { Route as AuthenticatedCarsIndexRouteImport } from './routes/_authenticated/cars/index'
+import { Route as AuthenticatedSettingsUsersRouteImport } from './routes/_authenticated/settings/users'
+import { Route as AuthenticatedSettingsPaintConfigRouteImport } from './routes/_authenticated/settings/paint-config'
 import { Route as AuthenticatedIncomeNewRouteImport } from './routes/_authenticated/income/new'
 import { Route as AuthenticatedIncomeIncomeIdRouteImport } from './routes/_authenticated/income/$incomeId'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
@@ -70,6 +72,18 @@ const AuthenticatedCarsIndexRoute = AuthenticatedCarsIndexRouteImport.update({
   path: '/cars/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSettingsUsersRoute =
+  AuthenticatedSettingsUsersRouteImport.update({
+    id: '/settings/users',
+    path: '/settings/users',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsPaintConfigRoute =
+  AuthenticatedSettingsPaintConfigRouteImport.update({
+    id: '/settings/paint-config',
+    path: '/settings/paint-config',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedIncomeNewRoute = AuthenticatedIncomeNewRouteImport.update({
   id: '/income/new',
   path: '/income/new',
@@ -101,6 +115,8 @@ export interface FileRoutesByFullPath {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/income/new': typeof AuthenticatedIncomeNewRoute
+  '/settings/paint-config': typeof AuthenticatedSettingsPaintConfigRoute
+  '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/cars/': typeof AuthenticatedCarsIndexRoute
   '/clients/': typeof AuthenticatedClientsIndexRoute
   '/income/': typeof AuthenticatedIncomeIndexRoute
@@ -115,6 +131,8 @@ export interface FileRoutesByTo {
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/income/new': typeof AuthenticatedIncomeNewRoute
+  '/settings/paint-config': typeof AuthenticatedSettingsPaintConfigRoute
+  '/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/cars': typeof AuthenticatedCarsIndexRoute
   '/clients': typeof AuthenticatedClientsIndexRoute
   '/income': typeof AuthenticatedIncomeIndexRoute
@@ -131,6 +149,8 @@ export interface FileRoutesById {
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/_authenticated/income/new': typeof AuthenticatedIncomeNewRoute
+  '/_authenticated/settings/paint-config': typeof AuthenticatedSettingsPaintConfigRoute
+  '/_authenticated/settings/users': typeof AuthenticatedSettingsUsersRoute
   '/_authenticated/cars/': typeof AuthenticatedCarsIndexRoute
   '/_authenticated/clients/': typeof AuthenticatedClientsIndexRoute
   '/_authenticated/income/': typeof AuthenticatedIncomeIndexRoute
@@ -147,6 +167,8 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/income/$incomeId'
     | '/income/new'
+    | '/settings/paint-config'
+    | '/settings/users'
     | '/cars/'
     | '/clients/'
     | '/income/'
@@ -161,6 +183,8 @@ export interface FileRouteTypes {
     | '/clients/$clientId'
     | '/income/$incomeId'
     | '/income/new'
+    | '/settings/paint-config'
+    | '/settings/users'
     | '/cars'
     | '/clients'
     | '/income'
@@ -176,6 +200,8 @@ export interface FileRouteTypes {
     | '/_authenticated/clients/$clientId'
     | '/_authenticated/income/$incomeId'
     | '/_authenticated/income/new'
+    | '/_authenticated/settings/paint-config'
+    | '/_authenticated/settings/users'
     | '/_authenticated/cars/'
     | '/_authenticated/clients/'
     | '/_authenticated/income/'
@@ -254,6 +280,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCarsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/settings/users': {
+      id: '/_authenticated/settings/users'
+      path: '/settings/users'
+      fullPath: '/settings/users'
+      preLoaderRoute: typeof AuthenticatedSettingsUsersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/paint-config': {
+      id: '/_authenticated/settings/paint-config'
+      path: '/settings/paint-config'
+      fullPath: '/settings/paint-config'
+      preLoaderRoute: typeof AuthenticatedSettingsPaintConfigRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/income/new': {
       id: '/_authenticated/income/new'
       path: '/income/new'
@@ -291,6 +331,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
   AuthenticatedIncomeIncomeIdRoute: typeof AuthenticatedIncomeIncomeIdRoute
   AuthenticatedIncomeNewRoute: typeof AuthenticatedIncomeNewRoute
+  AuthenticatedSettingsPaintConfigRoute: typeof AuthenticatedSettingsPaintConfigRoute
+  AuthenticatedSettingsUsersRoute: typeof AuthenticatedSettingsUsersRoute
   AuthenticatedCarsIndexRoute: typeof AuthenticatedCarsIndexRoute
   AuthenticatedClientsIndexRoute: typeof AuthenticatedClientsIndexRoute
   AuthenticatedIncomeIndexRoute: typeof AuthenticatedIncomeIndexRoute
@@ -304,6 +346,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
   AuthenticatedIncomeIncomeIdRoute: AuthenticatedIncomeIncomeIdRoute,
   AuthenticatedIncomeNewRoute: AuthenticatedIncomeNewRoute,
+  AuthenticatedSettingsPaintConfigRoute: AuthenticatedSettingsPaintConfigRoute,
+  AuthenticatedSettingsUsersRoute: AuthenticatedSettingsUsersRoute,
   AuthenticatedCarsIndexRoute: AuthenticatedCarsIndexRoute,
   AuthenticatedClientsIndexRoute: AuthenticatedClientsIndexRoute,
   AuthenticatedIncomeIndexRoute: AuthenticatedIncomeIndexRoute,
