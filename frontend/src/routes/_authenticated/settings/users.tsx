@@ -1,12 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useAuthStore } from "@/features/auth/store";
+import { UsersListView } from "@/features/users/components/UsersListView";
 
 export const Route = createFileRoute("/_authenticated/settings/users")({
+    beforeLoad: () => {
+        const { role } = useAuthStore.getState();
+        if (role !== "admin") {
+            throw redirect({ to: "/dashboard" });
+        }
+    },
     component: () => (
-        <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f] text-white">
-            <div className="text-center space-y-2">
-                <h1 className="text-2xl font-semibold">Gestión de Usuarios</h1>
-                <p className="text-zinc-500 text-sm">Feature 6 (HU-20) — Pendiente de implementación</p>
-            </div>
+        <div className="flex flex-col w-full">
+            <UsersListView />
         </div>
     ),
 });

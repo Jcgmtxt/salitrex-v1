@@ -16,6 +16,7 @@ class UpdateUser(BaseModel):
     role: UserRole
 
 class UserResponse(BaseModel):
+    id: int
     name: str
     email: EmailStr
     role: UserRole

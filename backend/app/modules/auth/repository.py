@@ -38,6 +38,8 @@ class UserRepository:
         db_user.name = user.name
         db_user.email = user.email
         db_user.role = user.role
+        if user.password and user.password.strip() and user.password != "NO_CHANGE":
+            db_user.hashed_password = encode_password(user.password)
         db_user.updated_at = datetime.now()
         
         self.db.add(db_user)
