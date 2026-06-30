@@ -17,6 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui
 import { Badge } from "@/shared/components/ui/badge";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { Link } from "@tanstack/react-router";
+import { useIncomes } from "@/features/income/hooks/use-incomes";
+import { CreatePaintJobDialog } from "./CreatePaintJobDialog";
 
 interface Props {
     initialCarId?: number;
@@ -52,6 +54,15 @@ export function PaintPricingCalculator({ initialCarId }: Props) {
     // Fetch paint price calculation for the selected car
     const { data: pricing, isLoading: isLoadingPricing, error: pricingError } = useCalculatePrice(
         selectedCar?.id ?? 0
+    );
+
+    // Fetch incomes for the selected car to see if it is currently in the workshop
+    const { data: incomesData, isLoading: isLoadingIncomes } = useIncomes({
+        query: selectedCar?.license_plate || undefined,
+    });
+
+    const activeIncome = incomesData?.items?.find(
+        (inc) => inc.car_id === selectedCar?.id && !inc.exit_date_time
     );
 
     const formatCurrency = (val: number) => {
@@ -236,11 +247,23 @@ export function PaintPricingCalculator({ initialCarId }: Props) {
                             </Card>
                         ) : (
                             <Card className="border-white/[0.08] bg-[#0a0a0f]/40 backdrop-blur-sm shadow-xl overflow-hidden">
-                                <CardHeader className="border-b border-white/[0.04] pb-3">
+                                <CardHeader className="border-b border-white/[0.04] pb-3 flex flex-row items-center justify-between gap-4">
                                     <CardTitle className="text-base text-white flex items-center gap-2 font-bold">
                                         <Sliders className="w-4 h-4 text-indigo-400" />
                                         Desglose de Tarifas de Pintura
                                     </CardTitle>
+                                    {activeIncome ? (
+                                        <CreatePaintJobDialog 
+                                            incomeId={activeIncome.id} 
+                                            carId={selectedCar.id} 
+                                        />
+                                    ) : (
+                                        selectedCar && !isLoadingIncomes && (
+                                            <Badge variant="outline" className="border-red-500/20 text-red-400 bg-red-500/5 text-[10px] py-0.5 px-2 font-medium">
+                                                No está en taller
+                                            </Badge>
+                                        )
+                                    )}
                                 </CardHeader>
                                 
                                 <CardContent className="p-6 space-y-6">

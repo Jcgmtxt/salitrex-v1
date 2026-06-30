@@ -37,3 +37,19 @@ export interface VehicleSizeAreaCreate {
     size: VehicleSize;
     area_cm2: number;
 }
+
+export interface PaintJob {
+    id: number;
+    income_id: number;
+    paint_type: string;
+    base_price: number;
+    negotiated_price: number;
+    margin_percent: number;
+    created_at: string;
+}
+
+export interface PaintJobCreate {
+    income_id: number;
+    paint_type: string;
+    negotiated_price: number;
+}

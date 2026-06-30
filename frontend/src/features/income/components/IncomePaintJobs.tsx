@@ -5,14 +5,17 @@ import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
+import { CreatePaintJobDialog } from "@/features/paint/components/CreatePaintJobDialog";
 
 interface Props {
     paintJobs?: PaintJob[];
     formatCurrency: (val: number) => string;
     carId?: number;
+    incomeId?: number;
+    isEnTaller?: boolean;
 }
 
-export function IncomePaintJobs({ paintJobs, formatCurrency, carId }: Props) {
+export function IncomePaintJobs({ paintJobs, formatCurrency, carId, incomeId, isEnTaller }: Props) {
     return (
         <Card className="bg-[#0a0a0f]/50 border-white/[0.08] backdrop-blur-md">
             <CardHeader className="flex flex-row items-center justify-between pb-3 gap-4">
@@ -20,21 +23,38 @@ export function IncomePaintJobs({ paintJobs, formatCurrency, carId }: Props) {
                     <PaintBucket className="w-4.5 h-4.5 text-indigo-400" />
                     Trabajos de Pintura Asociados
                 </CardTitle>
-                {carId && (
-                    <Link
-                        to="/paint"
-                        search={{ carId }}
-                    >
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 border-white/[0.08] hover:bg-white/[0.05] text-zinc-300 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                <div className="flex items-center gap-2">
+                    {carId && (
+                        <Link
+                            to="/paint"
+                            search={{ carId }}
                         >
-                            <Sliders className="w-3.5 h-3.5 text-indigo-400" />
-                            Calcular Pintura
-                        </Button>
-                    </Link>
-                )}
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-8 border-white/[0.08] hover:bg-white/[0.05] text-zinc-300 text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                            >
+                                <Sliders className="w-3.5 h-3.5 text-indigo-400" />
+                                Calcular Pintura
+                            </Button>
+                        </Link>
+                    )}
+                    {incomeId && carId && isEnTaller && (
+                        <CreatePaintJobDialog 
+                            incomeId={incomeId} 
+                            carId={carId} 
+                            trigger={
+                                <Button 
+                                    size="sm" 
+                                    className="h-8 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium flex items-center gap-1.5 cursor-pointer"
+                                >
+                                    <PaintBucket className="w-3.5 h-3.5 text-white" />
+                                    Registrar Trabajo
+                                </Button>
+                            }
+                        />
+                    )}
+                </div>
             </CardHeader>
             <CardContent>
                 {paintJobs && paintJobs.length > 0 ? (

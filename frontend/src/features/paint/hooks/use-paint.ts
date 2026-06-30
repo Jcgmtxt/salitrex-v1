@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PaintService } from "../api/paint.service";
-import type { PaintConfigCreate, VehicleSizeAreaCreate } from "../types";
+import type { PaintConfigCreate, VehicleSizeAreaCreate, PaintJobCreate } from "../types";
 import { toast } from "sonner";
 
 export function useCalculatePrice(carId: number) {
@@ -50,6 +50,26 @@ export function useUpdateVehicleArea() {
         },
         onError: (error: any) => {
             const detail = error?.response?.data?.detail ?? "Error al actualizar el área.";
+            toast.error(detail);
+        },
+    });
+}
+
+export function useCreatePaintJob(incomeId?: number) {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (job: PaintJobCreate) => PaintService.createPaintJob(job),
+        onSuccess: (data) => {
+            toast.success(`Trabajo creado — Margen: ${data.margin_percent.toFixed(1)}%`);
+            queryClient.invalidateQueries({ queryKey: ["incomes"] });
+            if (incomeId) {
+                queryClient.invalidateQueries({ queryKey: ["income", incomeId] });
+            } else if (data.income_id) {
+                queryClient.invalidateQueries({ queryKey: ["income", data.income_id] });
+            }
+        },
+        onError: (error: any) => {
+            const detail = error?.response?.data?.detail ?? "Error al registrar el trabajo de pintura.";
             toast.error(detail);
         },
     });

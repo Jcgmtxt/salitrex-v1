@@ -4,7 +4,9 @@ import type {
     PaintConfig, 
     PaintConfigCreate, 
     VehicleSizeArea, 
-    VehicleSizeAreaCreate 
+    VehicleSizeAreaCreate,
+    PaintJob,
+    PaintJobCreate
 } from "../types";
 
 export class PaintService {
@@ -30,6 +32,11 @@ export class PaintService {
 
     static async updateVehicleArea(area: VehicleSizeAreaCreate): Promise<VehicleSizeArea> {
         const response = await apiClient.post<VehicleSizeArea>("paint/areas", area);
+        return response.data;
+    }
+
+    static async createPaintJob(job: PaintJobCreate): Promise<PaintJob> {
+        const response = await apiClient.post<PaintJob>("paint/jobs", job);
         return response.data;
     }
 }

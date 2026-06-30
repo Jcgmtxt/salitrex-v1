@@ -97,7 +97,13 @@ export function IncomeDetail({ incomeId }: { incomeId: number }) {
                     <IncomeNotesLog incomeId={income.id} notesLog={income.notes_log} formatDate={formatDate} />
 
                     {/* Paint Jobs Section */}
-                    <IncomePaintJobs paintJobs={income.paint_jobs} formatCurrency={formatCurrency} carId={income.car_id} />
+                    <IncomePaintJobs 
+                        paintJobs={income.paint_jobs} 
+                        formatCurrency={formatCurrency} 
+                        carId={income.car_id}
+                        incomeId={income.id}
+                        isEnTaller={isEnTaller}
+                    />
                 </div>
 
                 {/* Column 3: Category Tabbed Photo Gallery */}
