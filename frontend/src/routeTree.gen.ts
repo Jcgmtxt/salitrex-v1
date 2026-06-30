@@ -23,7 +23,7 @@ import { Route as AuthenticatedSettingsPaintConfigRouteImport } from './routes/_
 import { Route as AuthenticatedIncomeNewRouteImport } from './routes/_authenticated/income/new'
 import { Route as AuthenticatedIncomeIncomeIdRouteImport } from './routes/_authenticated/income/$incomeId'
 import { Route as AuthenticatedClientsClientIdRouteImport } from './routes/_authenticated/clients/$clientId'
-import { Route as AuthenticatedCarsCarsIdRouteImport } from './routes/_authenticated/cars/$carsId'
+import { Route as AuthenticatedCarsCarIdRouteImport } from './routes/_authenticated/cars/$carId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -101,9 +101,9 @@ const AuthenticatedClientsClientIdRoute =
     path: '/clients/$clientId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedCarsCarsIdRoute = AuthenticatedCarsCarsIdRouteImport.update({
-  id: '/cars/$carsId',
-  path: '/cars/$carsId',
+const AuthenticatedCarsCarIdRoute = AuthenticatedCarsCarIdRouteImport.update({
+  id: '/cars/$carId',
+  path: '/cars/$carId',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -111,7 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/cars/$carId': typeof AuthenticatedCarsCarIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/income/new': typeof AuthenticatedIncomeNewRoute
@@ -127,7 +127,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/cars/$carId': typeof AuthenticatedCarsCarIdRoute
   '/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/income/new': typeof AuthenticatedIncomeNewRoute
@@ -145,7 +145,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/cars/$carsId': typeof AuthenticatedCarsCarsIdRoute
+  '/_authenticated/cars/$carId': typeof AuthenticatedCarsCarIdRoute
   '/_authenticated/clients/$clientId': typeof AuthenticatedClientsClientIdRoute
   '/_authenticated/income/$incomeId': typeof AuthenticatedIncomeIncomeIdRoute
   '/_authenticated/income/new': typeof AuthenticatedIncomeNewRoute
@@ -163,7 +163,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
-    | '/cars/$carsId'
+    | '/cars/$carId'
     | '/clients/$clientId'
     | '/income/$incomeId'
     | '/income/new'
@@ -179,7 +179,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/dashboard'
-    | '/cars/$carsId'
+    | '/cars/$carId'
     | '/clients/$clientId'
     | '/income/$incomeId'
     | '/income/new'
@@ -196,7 +196,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/login'
     | '/_authenticated/dashboard'
-    | '/_authenticated/cars/$carsId'
+    | '/_authenticated/cars/$carId'
     | '/_authenticated/clients/$clientId'
     | '/_authenticated/income/$incomeId'
     | '/_authenticated/income/new'
@@ -315,11 +315,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsClientIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/cars/$carsId': {
-      id: '/_authenticated/cars/$carsId'
-      path: '/cars/$carsId'
-      fullPath: '/cars/$carsId'
-      preLoaderRoute: typeof AuthenticatedCarsCarsIdRouteImport
+    '/_authenticated/cars/$carId': {
+      id: '/_authenticated/cars/$carId'
+      path: '/cars/$carId'
+      fullPath: '/cars/$carId'
+      preLoaderRoute: typeof AuthenticatedCarsCarIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
   }
@@ -327,7 +327,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedCarsCarsIdRoute: typeof AuthenticatedCarsCarsIdRoute
+  AuthenticatedCarsCarIdRoute: typeof AuthenticatedCarsCarIdRoute
   AuthenticatedClientsClientIdRoute: typeof AuthenticatedClientsClientIdRoute
   AuthenticatedIncomeIncomeIdRoute: typeof AuthenticatedIncomeIncomeIdRoute
   AuthenticatedIncomeNewRoute: typeof AuthenticatedIncomeNewRoute
@@ -342,7 +342,7 @@ interface AuthenticatedRouteChildren {
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedCarsCarsIdRoute: AuthenticatedCarsCarsIdRoute,
+  AuthenticatedCarsCarIdRoute: AuthenticatedCarsCarIdRoute,
   AuthenticatedClientsClientIdRoute: AuthenticatedClientsClientIdRoute,
   AuthenticatedIncomeIncomeIdRoute: AuthenticatedIncomeIncomeIdRoute,
   AuthenticatedIncomeNewRoute: AuthenticatedIncomeNewRoute,
