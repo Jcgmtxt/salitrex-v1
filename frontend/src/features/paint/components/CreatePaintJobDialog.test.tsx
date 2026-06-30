@@ -6,7 +6,6 @@ import { PaintService } from "../api/paint.service";
 import type { PricingCalculation, PaintJob } from "../types";
 
 const mockPricing: PricingCalculation = {
-    car_id: 1,
     car_size: "medium",
     area_cm2: 15000,
     price_per_cm2: 10,

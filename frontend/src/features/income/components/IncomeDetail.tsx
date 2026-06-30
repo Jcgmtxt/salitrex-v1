@@ -1,6 +1,6 @@
 import { useIncome } from "../hooks/use-incomes";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Edit2, Camera } from "lucide-react";
+import { Edit2, Camera } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { Skeleton } from "@/shared/components/ui/skeleton";

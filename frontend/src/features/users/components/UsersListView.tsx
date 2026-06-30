@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "@tanstack/react-router";
 import { useUsers, useDeleteUser } from "../hooks/use-users";
 import { useAuthStore } from "@/features/auth/store";
 import { UserFormDialog } from "./UserFormDialog";
@@ -22,7 +21,6 @@ import {
     DialogTitle 
 } from "@/shared/components/ui/dialog";
 import { 
-    ArrowLeft, 
     Shield, 
     User as UserIcon, 
     Trash2, 

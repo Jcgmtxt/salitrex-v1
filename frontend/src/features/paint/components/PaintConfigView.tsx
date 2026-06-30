@@ -5,14 +5,12 @@ import * as z from "zod";
 import { 
     PaintBucket, 
     Sliders, 
-    ArrowLeft, 
     Loader2, 
     Ruler, 
     Save, 
     DollarSign, 
     Percent 
 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";

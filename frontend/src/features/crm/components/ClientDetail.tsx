@@ -1,6 +1,6 @@
 import { useClient } from "../hooks/use-clients";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, ArrowLeft, Edit2, Car, User, Mail, Phone, CreditCard, Calendar, Plus } from "lucide-react";
+import { Edit2, Car, User, Mail, Phone, CreditCard, Calendar, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 import { ClientDialog } from "./ClientDialog";
