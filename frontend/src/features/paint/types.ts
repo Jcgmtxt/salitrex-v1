@@ -7,12 +7,15 @@ export interface PricingCalculation {
     base_price: number;
     min_allowed_price: number;
     min_margin_percent: number;
+    target_allowed_price: number;
+    target_margin_percent: number;
 }
 
 export interface PaintConfig {
     id: number;
     price_per_cm2: number;
     min_margin_percent: number;
+    target_margin_percent: number;
     is_active: boolean;
     created_at: string;
 }
@@ -20,6 +23,7 @@ export interface PaintConfig {
 export interface PaintConfigCreate {
     price_per_cm2: number;
     min_margin_percent: number;
+    target_margin_percent: number;
     is_active: boolean;
 }
 

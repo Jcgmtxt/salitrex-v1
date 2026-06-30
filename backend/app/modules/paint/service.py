@@ -14,7 +14,7 @@ class PaintService:
         config = self.db.exec(statement).first()
         if not config:
             # Fallback for dev if no config is in DB yet
-            return PaintConfig(price_per_cm2=1.0, min_margin_percent=30.0)
+            return PaintConfig(price_per_cm2=1.0, min_margin_percent=30.0, target_margin_percent=40.0)
         return config
 
     def calculate_min_price(self, car_id: int) -> dict:
@@ -43,6 +43,7 @@ class PaintService:
         
         base_price = area_cm2 * config.price_per_cm2
         min_allowed_price = base_price * (1 + (config.min_margin_percent / 100))
+        target_allowed_price = base_price * (1 + (config.target_margin_percent / 100))
 
         return {
             "car_size": car.size,
@@ -50,7 +51,9 @@ class PaintService:
             "price_per_cm2": config.price_per_cm2,
             "base_price": base_price,
             "min_allowed_price": min_allowed_price,
-            "min_margin_percent": config.min_margin_percent
+            "min_margin_percent": config.min_margin_percent,
+            "target_allowed_price": target_allowed_price,
+            "target_margin_percent": config.target_margin_percent
         }
 
     def create_paint_job(self, income_id: int, paint_type: str, negotiated_price: float, current_user_id: int) -> PaintJob:

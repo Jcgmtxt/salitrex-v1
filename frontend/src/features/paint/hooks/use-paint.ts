@@ -23,7 +23,7 @@ export function useUpdatePaintConfig() {
     return useMutation({
         mutationFn: (config: PaintConfigCreate) => PaintService.updateConfig(config),
         onSuccess: (data) => {
-            toast.success(`Configuración actualizada: $${data.price_per_cm2}/cm², margen ${data.min_margin_percent}%`);
+            toast.success(`Configuración actualizada: $${data.price_per_cm2}/cm², margen mín. ${data.min_margin_percent}%, margen obj. ${data.target_margin_percent}%`);
             queryClient.invalidateQueries({ queryKey: ["paint", "config"] });
         },
         onError: (error: any) => {

@@ -37,6 +37,10 @@ import type { VehicleSize } from "../types";
 const paintConfigSchema = z.object({
     price_per_cm2: z.coerce.number().min(0.01, "El precio debe ser mayor a 0"),
     min_margin_percent: z.coerce.number().min(0, "El margen mínimo no puede ser negativo"),
+    target_margin_percent: z.coerce.number().min(0, "El margen objetivo no puede ser negativo"),
+}).refine((data) => data.target_margin_percent >= data.min_margin_percent, {
+    message: "El margen objetivo debe ser mayor o igual al margen mínimo",
+    path: ["target_margin_percent"],
 });
 
 type PaintConfigInput = z.infer<typeof paintConfigSchema>;
@@ -75,6 +79,7 @@ export function PaintConfigView() {
         defaultValues: {
             price_per_cm2: 0.5,
             min_margin_percent: 30,
+            target_margin_percent: 40,
         },
     });
 
@@ -84,6 +89,7 @@ export function PaintConfigView() {
             reset({
                 price_per_cm2: config.price_per_cm2,
                 min_margin_percent: config.min_margin_percent,
+                target_margin_percent: config.target_margin_percent,
             });
         }
     }, [config, reset]);
@@ -111,6 +117,7 @@ export function PaintConfigView() {
         updateConfigMutation.mutate({
             price_per_cm2: data.price_per_cm2,
             min_margin_percent: data.min_margin_percent,
+            target_margin_percent: data.target_margin_percent,
             is_active: true,
         });
     };
@@ -227,6 +234,28 @@ export function PaintConfigView() {
                                         )}
                                     </div>
 
+                                    {/* Target Margin % */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="target_margin_percent" className="text-zinc-300 text-xs">
+                                            Margen Objetivo (%)
+                                        </Label>
+                                        <div className="relative">
+                                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <Percent className="h-3.5 w-3.5 text-zinc-500" />
+                                            </div>
+                                            <Input
+                                                id="target_margin_percent"
+                                                type="number"
+                                                placeholder="Ej: 40"
+                                                className="pl-8 bg-white/[0.02] border-white/[0.08] text-zinc-200 placeholder:text-zinc-500"
+                                                {...register("target_margin_percent")}
+                                            />
+                                        </div>
+                                        {errors.target_margin_percent && (
+                                            <p className="text-xs text-red-400">{errors.target_margin_percent.message}</p>
+                                        )}
+                                    </div>
+
                                     {/* Reference Box */}
                                     {config && (
                                         <div className="p-3 border border-white/[0.04] bg-white/[0.01] rounded-lg space-y-1.5 text-xs text-zinc-400">
@@ -240,6 +269,10 @@ export function PaintConfigView() {
                                             <div className="flex justify-between">
                                                 <span>Margen mínimo:</span>
                                                 <strong className="text-zinc-200">{config.min_margin_percent}%</strong>
+                                            </div>
+                                            <div className="flex justify-between">
+                                                <span>Margen objetivo:</span>
+                                                <strong className="text-zinc-200">{config.target_margin_percent}%</strong>
                                             </div>
                                         </div>
                                     )}

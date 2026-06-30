@@ -9,7 +9,6 @@ import {
     AlertCircle, 
     PaintBucket, 
     Sparkles, 
-    DollarSign, 
     Sliders,
     ArrowLeft
 } from "lucide-react";
@@ -275,40 +274,77 @@ export function PaintPricingCalculator({ initialCarId }: Props) {
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Minimum Margin Row */}
-                                    <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.005] flex justify-between items-center text-sm">
-                                        <div>
-                                            <p className="text-zinc-400 font-medium">Margen Mínimo Requerido del Taller</p>
-                                            <p className="text-xs text-zinc-500">Asegura la rentabilidad de insumos y mano de obra.</p>
-                                        </div>
-                                        <Badge className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs px-2.5 py-1 font-bold">
-                                            {pricing.min_margin_percent}%
-                                        </Badge>
-                                    </div>
-
-                                    {/* Minimum Allowed Price - Visually Highlighted */}
-                                    <div className="relative rounded-2xl p-6 overflow-hidden border border-indigo-500/30 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-indigo-500),transparent_40%)] opacity-[0.06]" />
-                                        
-                                        <div className="space-y-1 relative z-10">
-                                            <div className="flex items-center gap-1.5 text-indigo-400">
-                                                <Sparkles className="w-4 h-4 text-indigo-400 animate-spin-slow" />
-                                                <span className="text-[10px] font-bold uppercase tracking-wider">Precio Mínimo Permitido</span>
+                                    {/* Margins Row */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                        <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.005] flex justify-between items-center">
+                                            <div>
+                                                <p className="text-zinc-400 font-medium text-xs">Margen Mínimo Taller</p>
+                                                <p className="text-[10px] text-zinc-500">Rentabilidad mínima aceptada.</p>
                                             </div>
-                                            <p className="text-xs text-zinc-400">
-                                                Este es el precio mínimo a cobrar al cliente final para cumplir con el margen.
-                                            </p>
+                                            <Badge className="bg-red-500/10 text-red-400 border border-red-500/20 text-xs px-2.5 py-1 font-bold font-mono">
+                                                {pricing.min_margin_percent}%
+                                            </Badge>
                                         </div>
-
-                                        <div className="text-left sm:text-right relative z-10 shrink-0">
-                                            <p className="text-indigo-400 text-3xl font-extrabold tracking-tight flex items-center justify-start sm:justify-end">
-                                                <DollarSign className="w-5 h-5 -mr-1 align-middle self-center text-indigo-400 font-bold" />
-                                                {formatCurrency(pricing.min_allowed_price).replace("$", "").trim()}
-                                            </p>
-                                            <p className="text-[9px] uppercase tracking-wider text-zinc-500 mt-0.5">COP (IVA incluido)</p>
+                                        <div className="p-4 rounded-xl border border-white/[0.04] bg-white/[0.005] flex justify-between items-center">
+                                            <div>
+                                                <p className="text-zinc-400 font-medium text-xs">Margen Objetivo Taller</p>
+                                                <p className="text-[10px] text-zinc-500">Rentabilidad ideal del taller.</p>
+                                            </div>
+                                            <Badge className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-2.5 py-1 font-bold font-mono">
+                                                {pricing.target_margin_percent}%
+                                            </Badge>
                                         </div>
                                     </div>
+
+                                    {/* Prices display */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {/* Minimum Allowed Price */}
+                                        <div className="relative rounded-2xl p-5 overflow-hidden border border-red-500/20 bg-gradient-to-br from-red-500/[0.02] to-amber-500/[0.02] flex flex-col justify-between gap-3">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-1.5 text-red-400">
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Precio Mínimo Permitido</span>
+                                                </div>
+                                                <p className="text-[10px] text-zinc-500 leading-tight">
+                                                    Límite inferior absoluto. No vender por debajo de este precio.
+                                                </p>
+                                            </div>
+                                            <div className="text-left">
+                                                <p className="text-red-400 text-2xl font-extrabold tracking-tight">
+                                                    {formatCurrency(pricing.min_allowed_price)}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Recommended Target Price */}
+                                        <div className="relative rounded-2xl p-5 overflow-hidden border border-indigo-500/30 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 flex flex-col justify-between gap-3">
+                                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--color-indigo-500),transparent_40%)] opacity-[0.06]" />
+                                            <div className="space-y-1 relative z-10">
+                                                <div className="flex items-center gap-1.5 text-indigo-400">
+                                                    <Sparkles className="w-4 h-4 text-indigo-400 animate-spin-slow" />
+                                                    <span className="text-[10px] font-bold uppercase tracking-wider">Precio Recomendado (Objetivo)</span>
+                                                </div>
+                                                <p className="text-[10px] text-zinc-400 leading-tight">
+                                                    Precio ideal a cobrar para obtener el margen objetivo.
+                                                </p>
+                                            </div>
+                                            <div className="text-left relative z-10">
+                                                <p className="text-indigo-400 text-2xl font-extrabold tracking-tight">
+                                                    {formatCurrency(pricing.target_allowed_price)}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Negotiation Helper Info */}
+                                    <div className="p-4 rounded-xl border border-dashed border-indigo-500/20 bg-indigo-500/[0.01] text-xs text-zinc-400 flex items-start gap-2.5">
+                                        <AlertCircle className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="font-semibold text-zinc-300">Rango de Negociación Disponible</p>
+                                            <p className="mt-0.5 leading-relaxed">
+                                                Puedes negociar libremente con el cliente entre <strong className="text-red-400">{formatCurrency(pricing.min_allowed_price)}</strong> y <strong className="text-indigo-400">{formatCurrency(pricing.target_allowed_price)}</strong> para asegurar el margen requerido por el taller.
+                                            </p>
+                                        </div>
+                                    </div>             
                                 </CardContent>
                             </Card>
                         )

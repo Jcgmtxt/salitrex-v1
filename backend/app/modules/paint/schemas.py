@@ -6,6 +6,7 @@ from app.modules.crm.models import VehicleSize
 class PaintConfigBase(BaseModel):
     price_per_cm2: float
     min_margin_percent: float = 30.0
+    target_margin_percent: float = 40.0
     is_active: bool = True
 
 class PaintConfigCreate(PaintConfigBase):
@@ -49,3 +50,5 @@ class PricingCalculation(BaseModel):
     base_price: float
     min_allowed_price: float
     min_margin_percent: float
+    target_allowed_price: float
+    target_margin_percent: float

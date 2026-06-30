@@ -315,6 +315,7 @@
 ## Feature 5: Pintura — Calculadora y Trabajos
 
 ### HU-18: Calcular precio mínimo de pintura
+### listo modificar
 **Como** operador del taller  
 **Quiero** consultar el precio mínimo de pintura para un vehículo  
 **Para** negociar con el cliente sabiendo el precio base y margen mínimo  
@@ -384,7 +385,8 @@
 
 ---
 
-### HU-21: Configurar precios de pintura (Admin)
+### HU-21: Configurar precios de pintura (Admin) 
+### listo
 **Como** administrador del taller  
 **Quiero** configurar el precio por cm² y el margen mínimo  
 **Para** actualizar los precios cuando cambien los costos de materiales  
@@ -402,6 +404,7 @@
 ---
 
 ### HU-22: Configurar áreas por tamaño de vehículo (Admin)
+### listo
 **Como** administrador del taller  
 **Quiero** definir el área en cm² para cada tamaño de vehículo  
 **Para** que el cálculo de precios sea preciso según el tipo de vehículo  
