@@ -1,9 +1,10 @@
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, ExternalLink } from "lucide-react";
 import type { Car, Client } from "../types";
 import { CarDialog } from "./CarDialog";
 import { useAuthStore } from "@/features/auth/store";
+import { Link } from "@tanstack/react-router";
 
 interface Props {
     car: Car;
@@ -17,7 +18,12 @@ export function CarCard({ car, client }: Props) {
         <div className="p-4 rounded-lg border border-white/[0.08] bg-white/[0.02] flex flex-col gap-2 relative group transition-colors hover:bg-white/[0.04]">
             <div className="flex justify-between items-start">
                 <div>
-                    <h4 className="font-semibold text-zinc-200">{car.brand} {car.model}</h4>
+                    <h4 className="font-semibold text-zinc-200">
+                        <Link to={`/cars/${car.id}`} className="hover:text-indigo-400 hover:underline transition-all flex items-center gap-1.5">
+                            {car.brand} {car.model}
+                            <ExternalLink className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
+                        </Link>
+                    </h4>
                     <p className="text-sm text-zinc-400">{car.year} • <span className="capitalize">{car.color}</span></p>
                 </div>
                 <div className="flex flex-col items-end gap-2">

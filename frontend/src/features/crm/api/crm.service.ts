@@ -34,6 +34,11 @@ export class CRMService {
         return response.data;
     }
 
+    static async getCarById(id: number): Promise<Car> {
+        const response = await apiClient.get<Car>(`crm/cars/${id}`);
+        return response.data;
+    }
+
     static async createCar(data: CreateCarPayload): Promise<Car> {
         const response = await apiClient.post<Car>("crm/cars/", data);
         return response.data;

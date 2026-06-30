@@ -186,8 +186,17 @@ export function CarsTable({ cars }: Props) {
                                 className="flex-1 bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200"
                                 onClick={() => navigate({ to: `/clients/${selectedCar.client_id}` })}
                             >
-                                <ExternalLink className="h-4 w-4 mr-2" />
+                                <User className="h-4 w-4 mr-2 text-indigo-400" />
                                 Ir al Cliente
+                            </Button>
+                            <Button 
+                                variant="secondary" 
+                                size="sm" 
+                                className="flex-1 bg-white/[0.05] hover:bg-white/[0.1] text-zinc-200"
+                                onClick={() => navigate({ to: `/cars/${selectedCar.id}` })}
+                            >
+                                <ExternalLink className="h-4 w-4 mr-2 text-indigo-400" />
+                                Ver Historial
                             </Button>
                         </div>
                     </div>

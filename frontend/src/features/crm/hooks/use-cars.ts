@@ -9,3 +9,11 @@ export function useCars(params?: ListQueryParams) {
         placeholderData: keepPreviousData,
     });
 }
+
+export function useCar(id: number) {
+    return useQuery({
+        queryKey: ["cars", id],
+        queryFn: () => CRMService.getCarById(id),
+        enabled: !!id,
+    });
+}

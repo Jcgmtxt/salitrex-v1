@@ -17,7 +17,7 @@ export function CarsMobileList({ cars }: Props) {
                 <Card 
                     key={car.id} 
                     className="border-white/[0.08] bg-white/[0.02] shadow-none backdrop-blur-sm cursor-pointer active:bg-white/[0.05] transition-colors"
-                    onClick={() => navigate({ to: `/clients/${car.client_id}` })}
+                    onClick={() => navigate({ to: `/cars/${car.id}` })}
                 >
                     <CardContent className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-start">
