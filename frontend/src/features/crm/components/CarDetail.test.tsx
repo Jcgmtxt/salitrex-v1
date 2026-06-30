@@ -52,7 +52,7 @@ const mockIncomesResponse: PaginatedResponse<Income> = {
                     income_id: 1,
                     note: "Preparado de superficie terminado",
                     created_at: "2026-05-23T12:00:00Z",
-                    user_id: 2,
+                    created_by: 2,
                     creator_name: "Operador Uno",
                 }
             ],

@@ -160,7 +160,8 @@ export function CarDetail({ carId }: Props) {
                                         </div>
                                     </div>
                                     <Link 
-                                        to={`/clients/${car.client_id}`}
+                                        to="/clients/$clientId"
+                                        params={{ clientId: car.client_id.toString() }}
                                         className="h-7 w-7 rounded-md bg-white/[0.02] group-hover:bg-indigo-600 border border-white/[0.04] group-hover:border-indigo-500 flex items-center justify-center text-zinc-400 group-hover:text-white transition-all focus:outline-none"
                                         title="Ver perfil del cliente"
                                     >
@@ -233,7 +234,7 @@ export function CarDetail({ carId }: Props) {
                                                                     Entregado
                                                                 </Badge>
                                                             )}
-                                                            <Link to={`/income/${income.id}`}>
+                                                            <Link to="/income/$incomeId" params={{ incomeId: income.id.toString() }}>
                                                                 <Button 
                                                                     size="sm" 
                                                                     variant="ghost" 

@@ -19,7 +19,7 @@ export function CarCard({ car, client }: Props) {
             <div className="flex justify-between items-start">
                 <div>
                     <h4 className="font-semibold text-zinc-200">
-                        <Link to={`/cars/${car.id}`} className="hover:text-indigo-400 hover:underline transition-all flex items-center gap-1.5">
+                        <Link to="/cars/$carId" params={{ carId: car.id.toString() }} className="hover:text-indigo-400 hover:underline transition-all flex items-center gap-1.5">
                             {car.brand} {car.model}
                             <ExternalLink className="h-3.5 w-3.5 opacity-40 group-hover:opacity-100 transition-opacity" />
                         </Link>
