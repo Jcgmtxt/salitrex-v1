@@ -18,10 +18,66 @@ export function TopHeader() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const currentNavItem = NAVIGATION_ITEMS.find((item) =>
-        location.pathname.startsWith(item.to)
+    const pathname = location.pathname;
+    
+    // Build breadcrumbs dynamically
+    interface BreadcrumbSegment {
+        name: string;
+        to: string;
+        icon?: any;
+    }
+    
+    const breadcrumbs: BreadcrumbSegment[] = [];
+    
+    // Find the main nav item matching the prefix
+    const mainNavItem = NAVIGATION_ITEMS.find((item) =>
+        item.to !== "/dashboard" && pathname.startsWith(item.to)
     );
-    const CurrentIcon = currentNavItem?.icon;
+    
+    if (pathname.startsWith("/dashboard")) {
+        const dbItem = NAVIGATION_ITEMS.find(n => n.to === "/dashboard");
+        breadcrumbs.push({
+            name: "Dashboard",
+            to: "/dashboard",
+            icon: dbItem?.icon,
+        });
+    } else if (mainNavItem) {
+        breadcrumbs.push({
+            name: mainNavItem.name === "Config" ? "Configuración" : mainNavItem.name,
+            to: mainNavItem.to,
+            icon: mainNavItem.icon,
+        });
+        
+        // Add subroutes
+        if (mainNavItem.to === "/clients" && pathname !== "/clients") {
+            breadcrumbs.push({
+                name: "Ver cliente",
+                to: pathname,
+            });
+        } else if (mainNavItem.to === "/cars" && pathname !== "/cars") {
+            breadcrumbs.push({
+                name: "Ver vehículo",
+                to: pathname,
+            });
+        } else if (mainNavItem.to === "/income" && pathname !== "/income") {
+            breadcrumbs.push({
+                name: "Ver detalle",
+                to: pathname,
+            });
+        } else if (mainNavItem.to === "/settings") {
+            if (pathname.includes("/paint-config")) {
+                breadcrumbs.push({
+                    name: "Tarifas de Pintura",
+                    to: "/settings/paint-config",
+                });
+            } else if (pathname.includes("/users")) {
+                breadcrumbs.push({
+                    name: "Operadores",
+                    to: "/settings/users",
+                });
+            }
+        }
+    }
 
     const handleLogout = () => {
         clearAuth();
@@ -49,25 +105,40 @@ export function TopHeader() {
 
             {/* Espaciador y Breadcrumb en Desktop */}
             <div className="hidden md:flex flex-1 items-center px-4">
-                {currentNavItem && (
-                    <div className="flex items-center gap-2 text-sm text-zinc-500">
-                        <Link 
-                            to="/dashboard" 
-                            className="hover:text-indigo-400 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-sm"
-                            title="Ir al Dashboard"
-                        >
-                            <Wrench className="h-4 w-4" />
-                        </Link>
-                        <ChevronRight className="h-4 w-4 opacity-50" />
-                        <Link 
-                            to={currentNavItem.to}
-                            className="flex items-center gap-2 font-medium text-white bg-white/[0.04] px-2.5 py-1 rounded-md border border-white/[0.08] hover:bg-white/[0.08] transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
-                        >
-                            {CurrentIcon && <CurrentIcon className="h-3.5 w-3.5 text-indigo-400" />}
-                            {currentNavItem.name}
-                        </Link>
-                    </div>
-                )}
+                <div className="flex items-center gap-2 text-sm text-zinc-500">
+                    <Link 
+                        to="/dashboard" 
+                        className="hover:text-indigo-400 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500/50 rounded-sm"
+                        title="Ir al Dashboard"
+                    >
+                        <Wrench className="h-4 w-4" />
+                    </Link>
+                    
+                    {breadcrumbs.map((segment, index) => {
+                        const isLast = index === breadcrumbs.length - 1;
+                        const SegmentIcon = segment.icon;
+                        
+                        return (
+                            <div key={segment.to + index} className="flex items-center gap-2">
+                                <ChevronRight className="h-4 w-4 opacity-50" />
+                                {isLast ? (
+                                    <div className="flex items-center gap-2 font-medium text-white bg-white/[0.04] px-2.5 py-1 rounded-md border border-white/[0.08]">
+                                        {SegmentIcon && <SegmentIcon className="h-3.5 w-3.5 text-indigo-400" />}
+                                        {segment.name}
+                                    </div>
+                                ) : (
+                                    <Link 
+                                        to={segment.to}
+                                        className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+                                    >
+                                        {SegmentIcon && <SegmentIcon className="h-3.5 w-3.5 text-zinc-500" />}
+                                        {segment.name}
+                                    </Link>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
 
             {/* User Menu */}

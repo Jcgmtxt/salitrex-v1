@@ -51,18 +51,8 @@ export function IncomeDetail({ incomeId }: { incomeId: number }) {
     const isEnTaller = !income.exit_date_time;
 
     return (
-        <div className="space-y-6 w-full max-w-6xl mx-auto pb-12">
-            {/* Header / Breadcrumb */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-2 text-sm text-zinc-400">
-                    <Link to="/income" className="hover:text-white transition-colors flex items-center gap-1">
-                        <ArrowLeft className="w-4 h-4 mr-1" />
-                        Entradas
-                    </Link>
-                    <span>/</span>
-                    <span className="text-zinc-200">Detalle de Ingreso</span>
-                </div>
-                
+        <div className="space-y-6 w-full max-w-6xl mx-auto pb-12 pt-4">
+            <div className="flex justify-end">
                 {isEnTaller ? (
                     <EditIncomeDialog income={income}>
                         <Button variant="outline" className="border-white/[0.08] hover:bg-white/[0.05] text-zinc-300 h-9">

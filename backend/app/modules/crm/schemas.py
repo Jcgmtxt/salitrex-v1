@@ -56,7 +56,6 @@ class CarResponse(CarsBase):
     class Config:
         from_attributes = True
 
-# TODO: Agregar las entradas 
 
 class ClientResponse(ClientBase):
     id: int

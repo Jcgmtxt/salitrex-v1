@@ -69,6 +69,7 @@ class IncomeService:
             category = categories[i] if i < len(categories) else PhotoCategory.ENTRY
             
             # TODO: check this to make scalable
+            # Lo voy a dejar asi YOLO
             ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
             object_name = f"incomes/{now.year}-{now.month:02d}-{now.day:02d}/ingreso-{income.id}_{plate}_{category.value}_{user_id or 'system'}_{uuid.uuid4()}.{ext}"
             

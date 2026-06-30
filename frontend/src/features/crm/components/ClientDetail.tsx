@@ -29,17 +29,7 @@ export function ClientDetail({ clientId }: { clientId: number }) {
     // y se pueda navegar desde ahi a los clientes
 
     return (
-        <div className="space-y-6 w-full max-w-6xl mx-auto pb-10">
-            {/* Breadcrumb & Header */}
-            <div className="flex items-center gap-2 text-sm text-zinc-400 mb-6">
-                <Link to="/clients" className="hover:text-white transition-colors flex items-center gap-1">
-                    <ArrowLeft className="w-4 h-4 mr-1" />
-                    Clientes
-                </Link>
-                <ChevronRight className="w-4 h-4" />
-                <span className="text-zinc-200">Ver cliente</span>
-            </div>
-
+        <div className="space-y-6 w-full max-w-6xl mx-auto pb-10 pt-4">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left Column: User Data & Cars */}
                 <div className="lg:col-span-2 space-y-6">

@@ -150,18 +150,9 @@ export function PaintConfigView() {
 
     return (
         <div className="space-y-6 w-full max-w-5xl mx-auto pb-12 px-4 pt-4">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-sm text-zinc-400">
-                        <Link to="/settings" className="hover:text-white transition-colors flex items-center gap-1">
-                            <ArrowLeft className="w-4 h-4 mr-1" />
-                            Configuración
-                        </Link>
-                        <span>/</span>
-                        <span className="text-zinc-200">Tarifas de Pintura</span>
-                    </div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2 mt-1">
+                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                         <PaintBucket className="w-6 h-6 text-indigo-400" />
                         Configurar Precios y Dimensiones
                     </h1>
