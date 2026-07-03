@@ -15,6 +15,24 @@ class PhotoRead(PhotoBase):
     id: int
     income_id: int
     presigned_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# --- INCOME NOTE SCHEMAS ---
+class IncomeNoteBase(BaseModel):
+    note: str
+
+class IncomeNoteCreate(IncomeNoteBase):
+    pass
+
+class IncomeNoteRead(IncomeNoteBase):
+    id: int
+    income_id: int
+    created_at: datetime
+    created_by: Optional[int] = None
+    creator_name: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -62,3 +80,4 @@ class IncomeReadWithDetails(IncomeRead):
     photos: List[PhotoRead] = []
     car: Optional[CarResponse] = None
     paint_jobs: List[PaintJobRead] = []
+    notes_log: List[IncomeNoteRead] = []

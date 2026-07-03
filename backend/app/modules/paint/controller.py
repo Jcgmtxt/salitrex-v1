@@ -35,6 +35,19 @@ def create_paint_job(
         current_user_id=current_user.id
     )
 
+@router.get("/config", response_model=PaintConfigRead)
+def get_active_config(db: Session = Depends(get_db)):
+    """Get the active paint configuration"""
+    service = PaintService(db)
+    return service.get_active_config()
+
+@router.get("/areas", response_model=List[VehicleSizeAreaRead])
+def get_area_mappings(db: Session = Depends(get_db)):
+    """Get all vehicle size area mappings"""
+    from app.modules.paint.models import VehicleSizeArea
+    from sqlmodel import select
+    return db.exec(select(VehicleSizeArea)).all()
+
 # Configuration Endpoints (Admin only ideally, for now open)
 
 @router.post("/config", response_model=PaintConfigRead)

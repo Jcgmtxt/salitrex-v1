@@ -15,7 +15,7 @@ from sqlmodel import SQLModel
 # Import all models so Alembic can detect them
 from app.modules.auth.models import User
 from app.modules.crm.models import Client, Cars
-from app.modules.income.models import Income, Photos
+from app.modules.income.models import Income, Photos, IncomeNote
 from app.modules.paint.models import PaintJob, PaintConfig, VehicleSizeArea
 
 # this is the Alembic Config object, which provides

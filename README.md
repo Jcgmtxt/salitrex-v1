@@ -6,24 +6,42 @@ Salitrex is a comprehensive management system for an automotive workshop, initia
 ## Architecture
 The project follows a split-stack architecture:
 
-- **Backend**: FastAPI (Python) using a Modular Monolith pattern.
-- **Frontend**: React + TypeScript + bun (Vite).
-- **Database**: PostgreSQL.
+- **Backend**: FastAPI (Python 3.10+) using a Modular Monolith pattern.
+- **Frontend**: React 19 + TypeScript (strict) + Vite 8.
+- **Database**: PostgreSQL (SQLite for local development).
+- **Auth**: JWT (python-jose) + bcrypt (passlib).
 - **Storage**: AWS S3 (for vehicle photos/videos).
+
+### Frontend Stack (Planned)
+- **Routing**: TanStack Router (file-based, type-safe).
+- **Styling**: Tailwind CSS v4 + Shadcn/UI (Premium dark aesthetic).
+- **State**: TanStack Query (server state) + Zustand (client state).
+- **Forms**: React Hook Form + Zod.
+- **Icons**: Lucide React.
 
 ## Project Structure
 
 ```
-salitrex/
-├── backend/                # FastAPI Application
+salitrex-v1/
+├── backend/                    # FastAPI Application
 │   ├── app/
-│   │   ├── core/           # Config, Database, Security
-│   │   ├── modules/        # Domain Modules (Auth, CRM, Workshop)
-│   │   └── main.py         # Entry point
-│   └── pyproject.toml      # Python dependencies
-├── frontend/               # React Application
-│   ├── src/                # Components, Pages, Hooks
-│   └── bun.lockb           # Bun lockfile (to be generated)
+│   │   ├── core/               # Config, Database, Security, Seeders
+│   │   ├── modules/
+│   │   │   ├── auth/           # Auth: JWT login, register, user CRUD
+│   │   │   ├── crm/            # CRM: Clients + Cars CRUD
+│   │   │   ├── income/         # Income: Vehicle entries + S3 photo upload
+│   │   │   ├── paint/          # Paint: Price calculator, jobs, config
+│   │   │   └── common/         # Shared utilities (S3 storage)
+│   │   └── main.py             # Entry point
+│   ├── alembic/                # Database migrations
+│   └── requirements.txt        # Python dependencies
+├── frontend/                   # React Application (Vite scaffold)
+│   ├── src/
+│   │   ├── App.tsx             # Main component (starter template)
+│   │   ├── main.tsx            # React entry point
+│   │   └── index.css           # Styles
+│   ├── vite.config.ts          # Vite configuration
+│   └── package.json
 └── README.md
 ```
 
@@ -31,18 +49,13 @@ salitrex/
 
 ### Prerequisites
 - **Python**: 3.10+
-- **Node.js/npm**: Required if Bun is not installed or supported.
-- **Bun**: Recommended for Frontend (Install via `powershell -c "irm bun.sh/install.ps1 | iex"`).
-- **PostgreSQL**: Running locally or via Docker.
+- **Bun**: v1.3.5+ (or npm/pnpm). Install via `curl -fsSL https://bun.sh/install | bash`.
+- **PostgreSQL**: Running locally or via Docker (SQLite used as default for dev).
 
 ### 1. Backend Setup
 Navigate to the `backend/` directory:
 ```bash
 cd backend
-```
-
-Create and activate a virtual environment:
-```bash
 python -m venv venv
 # Windows
 .\venv\Scripts\activate
@@ -50,56 +63,37 @@ python -m venv venv
 source venv/bin/activate
 ```
 
-Install dependencies:
+Install dependencies and run:
 ```bash
 pip install -r requirements.txt
-```
-
-Run database migrations (once models are ready):
-```bash
 alembic upgrade head
-```
-
-Start the development server:
-```bash
 uvicorn app.main:app --reload
 ```
-Swagger UI will be available at: `http://localhost:8000/docs`
+- API: `http://localhost:8000`
+- Swagger UI: `http://localhost:8000/docs`
 
 ### 2. Frontend Setup
 Navigate to the `frontend/` directory:
 ```bash
 cd frontend
-```
-
-Install dependencies (using Bun or npm):
-```bash
-# Option A: Bun (Recommended)
 bun install
-
-# Option B: npm (If Bun fails)
-npm install
-```
-
-Start the development server:
-```bash
-# Bun
 bun run dev
-
-# npm
-npm run dev
 ```
+The application will be available at: `http://localhost:5173`
 
-Run for production (Bun):
-```bash
-bun start
-```
+## Backend Modules
 
-## Development Status
-- [x] Phase 1: Planning & Architecture
-- [x] Phase 2: Project Initialization
-- [/] Phase 3: Database & Models (Current)
+| Module | Prefix | Description |
+|--------|--------|-------------|
+| **Auth** | `/api/v1/auth` | Register, login (JWT), user CRUD (admin/operator roles) |
+| **CRM** | `/api/v1/crm` | Clients CRUD + search, Cars CRUD |
+| **Income** | `/api/v1/income` | Vehicle entries with S3 photo uploads (entry/process/finished/exit) |
+| **Paint** | `/api/v1/paint` | Price calculator (area × price/cm²), paint jobs with margin validation, config |
+
+## Current Status
+
+- ✅ **Backend**: Fully implemented — 4 modules, ~20 endpoints, JWT auth, S3 integration
+- 🚧 **Frontend**: Vite + React 19 scaffold — business logic implementation in progress
 
 ---
-*This project was initialized using `bun init` in bun v1.3.5.*
-
+*This project uses Bun as the frontend package manager and Vite as the bundler.*

@@ -26,7 +26,6 @@ class Client(SQLModel, table=True):
     name: str = Field(min_length=3, max_length=255)
     document_type: DocumentType = Field(max_length=50)
     identity_number: str = Field(min_length=3, max_length=50, unique=True, index=True)
-    #TODO: Preguntar si se requiere el campo de email
     email: EmailStr = Field(min_length=3, max_length=50, nullable=False, index=True)
     phone: str = Field(min_length=3, max_length=50, nullable=False, index=True)
     created_by: Optional[int] = Field(default=None, foreign_key="users.id")

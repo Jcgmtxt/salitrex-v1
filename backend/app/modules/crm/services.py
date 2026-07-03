@@ -27,19 +27,18 @@ class CRMService:
 
         return client
 
-    def get_clients(self) -> List[ClientResponse]:
-        clients = self.repository.get_clients()
-
-        if not clients:
-            return []
-
-        return clients
-
-    def search_clients(self, query: str) -> List[ClientResponse]:
-        if not query or len(query.strip()) < 1:
-            return []
-            
-        return self.repository.search_clients(query.strip())
+    def get_clients(
+        self,
+        query: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> dict:
+        clients, total = self.repository.get_clients(
+            query=query,
+            offset=offset,
+            limit=limit,
+        )
+        return {"items": clients, "total": total, "offset": offset, "limit": limit}
 
     def update_client(self, client_id: int, client_data: ClientUpdate) -> ClientResponse:
         updated_client = self.repository.update_client(client_id, client_data)
@@ -73,9 +72,6 @@ class CRMService:
 
     #leer
     def get_car(self, car_id: int) -> CarResponse:
-        # We need a get_car_by_id in repo, or use existing ones. 
-        # Repository doesn't have get_car_by_id yet, let's assume it does or use get_car_by_plate if needed.
-        # Actually, let's fix repo later if it's missing.
         car = self.repository.get_car_by_id(car_id)
 
         if not car:
@@ -83,13 +79,18 @@ class CRMService:
 
         return car
 
-    def get_cars(self) -> List[CarResponse]:
-        cars = self.repository.get_cars()
-
-        if not cars:
-            return []
-
-        return cars
+    def get_cars(
+        self,
+        query: str | None = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> dict:
+        cars, total = self.repository.get_cars(
+            query=query,
+            offset=offset,
+            limit=limit,
+        )
+        return {"items": cars, "total": total, "offset": offset, "limit": limit}
 
     def update_car(self, car_id: int, car_data: CarUpdate) -> CarResponse:
         updated_car = self.repository.update_car(car_id, car_data)

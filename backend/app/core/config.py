@@ -22,7 +22,9 @@ class Settings(BaseSettings):
         default_factory=lambda: secrets.token_urlsafe(32) if __name__ == "__main__" else None
     )
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    COOKIE_SECURE: bool = False
     
     ALLOWED_HOSTS: Union[List[str], str] = ["localhost", "127.0.0.1"]
     CORS_ORIGINS: Union[List[str], str] = []

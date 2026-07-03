@@ -44,37 +44,47 @@ class CRMRepository:
         statement = select(Client).where(Client.identity_number == client_identity_number)
         return self.db.exec(statement).first()
 
-    def get_clients(self, skip: int = 0, limit: int = 100) -> List[Client]:
-        statement = select(Client).offset(skip).limit(limit)
-        return self.db.exec(statement).all()
+    def get_clients(
+        self,
+        query: Optional[str] = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> tuple[List[Client], int]:
+        base = select(Client).options(joinedload(Client.cars))
 
-    def search_clients(self, query: str) -> List[Client]:
-        query_str = f"%{query}%"
-        
-        # Define ranking logic
-        # 1. Exact match on Identity or Phone (Highest Priority)
-        # 2. Name starts with Query
-        # 3. Contains Query (Lowest Priority - default match)
-        rank_score = case(
-            (Client.identity_number == query, 3),
-            (Client.phone == query, 3),
-            (Client.name.ilike(f"{query}%"), 2),
-            else_=1
-        )
+        if query and query.strip():
+            q = query.strip()
+            query_str = f"%{q}%"
 
-        statement = (
-            select(Client)
-            .where(
-                or_(
-                    Client.name.ilike(query_str),
-                    Client.identity_number.ilike(query_str),
-                    Client.phone.ilike(query_str)
-                )
+            rank_score = case(
+                (Client.identity_number == q, 3),
+                (Client.phone == q, 3),
+                (Client.name.ilike(f"{q}%"), 2),
+                else_=1,
             )
-            .order_by(desc(rank_score), Client.name)
-        )
-        
-        return self.db.exec(statement).all()
+
+            base = (
+                base.where(
+                    or_(
+                        Client.name.ilike(query_str),
+                        Client.identity_number.ilike(query_str),
+                        Client.phone.ilike(query_str),
+                    )
+                )
+                .order_by(desc(rank_score), Client.name)
+            )
+        else:
+            base = base.order_by(Client.name)
+
+        # Conteo total (sin paginación)
+        from sqlalchemy import func
+        count_stmt = select(func.count()).select_from(base.subquery())
+        total = self.db.exec(count_stmt).one()
+
+        # Aplicar paginación
+        results = self.db.exec(base.offset(offset).limit(limit)).unique().all()
+
+        return results, total
 
     def delete_client(self, client: Client) -> None:
         self.db.delete(client)
@@ -110,10 +120,32 @@ class CRMRepository:
         statement = select(Cars).where(Cars.license_plate == plate).options(joinedload(Cars.client))
         return self.db.exec(statement).first()
 
-    def get_cars(self, skip: int = 0, limit: int = 100) -> List[Cars]:
-        # Eager load clients for all cars efficiently
-        statement = select(Cars).options(joinedload(Cars.client)).offset(skip).limit(limit)
-        return self.db.exec(statement).all()
+    def get_cars(
+        self,
+        query: Optional[str] = None,
+        offset: int = 0,
+        limit: int = 20,
+    ) -> tuple[List[Cars], int]:
+        base = select(Cars).options(joinedload(Cars.client))
+
+        if query and query.strip():
+            q = f"%{query.strip()}%"
+            base = base.where(
+                or_(
+                    Cars.license_plate.ilike(q),
+                    Cars.brand.ilike(q),
+                    Cars.model.ilike(q)
+                )
+            )
+
+        base = base.order_by(Cars.id.desc())
+
+        from sqlalchemy import func
+        count_stmt = select(func.count()).select_from(base.subquery())
+        total = self.db.exec(count_stmt).one()
+
+        results = self.db.exec(base.offset(offset).limit(limit)).unique().all()
+        return results, total
     def get_car_by_id(self, car_id: int) -> Optional[Cars]:
         statement = select(Cars).where(Cars.id == car_id).options(joinedload(Cars.client))
         return self.db.exec(statement).first()
