@@ -37,15 +37,24 @@ class IncomeNoteRead(IncomeNoteBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+# --- SERVICE SCHEMAS (For Dispatcher) ---
+class PaintServicePayload(BaseModel):
+    paint_type: str = Field(..., description="E.g., Metallic, Matte, Standard")
+    negotiated_price: float = Field(..., description="Final price agreed with client")
+
+class ServicePayloads(BaseModel):
+    paint: Optional[PaintServicePayload] = None
+    # Future services like 'wash' or 'mechanical' can be added here
+
 # --- INCOME SCHEMAS ---
 class IncomeBase(BaseModel):
-    car_id: int
+    car_id: int = Field(..., description="ID of the car being received")
     income_date_time: Optional[datetime] = Field(default_factory=datetime.now)
-    agreed_exit_date_time: Optional[datetime] = None
-    notes: Optional[str] = None
+    agreed_exit_date_time: Optional[datetime] = Field(None, description="Estimated delivery date")
+    notes: Optional[str] = Field(None, description="General observations")
 
 class IncomeCreate(IncomeBase):
-    # Optional photos to add during creation
+    # Optional photos to add during creation (mostly used internally after upload)
     photos: List[PhotoCreate] = []
 
 class IncomeUpdate(BaseModel):
@@ -64,6 +73,7 @@ class IncomeRead(IncomeBase):
     model_config = ConfigDict(from_attributes=True)
 
 from app.modules.crm.schemas import CarResponse
+# Using TYPE_CHECKING or imported schema for PaintJob
 from app.modules.paint.schemas import PaintJobRead
 
 class IncomeReadWithDetails(IncomeRead):

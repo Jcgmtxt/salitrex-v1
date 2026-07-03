@@ -46,30 +46,30 @@ class IncomeService:
         income_data: IncomeCreate, 
         photo_files: List[UploadFile], 
         categories: List[PhotoCategory],
+        services_payload: Optional[dict] = None,
         user_id: Optional[int] = None
     ) -> Income:
-        # 1. Create income record first to get the ID
-        # We temporarily remove photos from income_data to create the base record
+        """
+        Main entry point for vehicle reception. 
+        Creates the income record, uploads photos, and dispatches additional services.
+        """
+        # 1. Create income record first
         photos_save = income_data.photos
         income_data.photos = []
         income = self.repository.create_income(income_data, user_id=user_id)
         
-        # 2. Get additional info for the path (Plate)
+        # 2. Get Plate for storage path structure
         from app.modules.crm.models import Cars
         car = self.repository.db.get(Cars, income.car_id)
         plate = car.license_plate if car else "unknown_plate"
         
-        # 3. Process and Upload photos with structured path
-        # Structure: incomes/YYYY/MM/DD/ingreso_ID/PLATE/CATEGORY/USER_ID_uuid.ext
+        # 3. Process Photos
         now = datetime.datetime.now()
-        
         photos_to_create = []
         for i, file in enumerate(photo_files):
             file_content = await file.read()
             category = categories[i] if i < len(categories) else PhotoCategory.ENTRY
             
-            # TODO: check this to make scalable
-            # Lo voy a dejar asi YOLO
             ext = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
             object_name = f"incomes/{now.year}-{now.month:02d}-{now.day:02d}/ingreso-{income.id}_{plate}_{category.value}_{user_id or 'system'}_{uuid.uuid4()}.{ext}"
             
@@ -91,13 +91,37 @@ class IncomeService:
                 
                 photos_to_create.append(PhotoCreate(s3_key=s3_key, category=category))
 
-        # 4. Save photo records in DB
+        # 4. Save photo records
         if photos_to_create:
             self.repository.add_photos(income.id, photos_to_create)
-            # Refresh to include new photos in the return
-            self.repository.db.refresh(income)
+        
+        # 5. Dispatch additional services (Extensibility Point)
+        if services_payload:
+            await self._dispatch_services(income.id, services_payload, user_id)
 
+        # Refresh to include new photos and relations in the return
+        self.repository.db.refresh(income)
         return income
+
+    async def _dispatch_services(self, income_id: int, services: dict, user_id: int):
+        """
+        Coordinates the creation of services in other modules.
+        This keeps Income decoupled from the internal logic of each service.
+        """
+        # --- PAINT SERVICE ---
+        if "paint" in services and services["paint"]:
+            from app.modules.paint.service import PaintService
+            paint_data = services["paint"]
+            paint_service = PaintService(self.repository.db)
+            paint_service.create_paint_job(
+                income_id=income_id,
+                paint_type=paint_data.get("paint_type", "Standard"),
+                negotiated_price=paint_data.get("negotiated_price", 0.0),
+                current_user_id=user_id
+            )
+        
+        # --- FUTURE SERVICES (Wash, Mechanical, etc.) ---
+        # if "wash" in services: ...
 
     def _add_presigned_urls(self, incomes: List[Income]):
         """Helper to add presigned URLs to photo models in place"""

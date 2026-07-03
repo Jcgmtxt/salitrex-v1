@@ -44,11 +44,10 @@ def seed_paint_config():
         if session.exec(select(PaintConfig)).first():
             print("Paint config already exists. Skipping...")
             return
-        
         config = PaintConfig(price_per_cm2=0.5, min_margin_percent=30.0, target_margin_percent=40.0)
         session.add(config)
         session.commit()
-        print("[OK] Default Paint Config created ($0.5/cm2, 30% margin)")
+        print("[OK] Default Paint Config created ($0.5/cm2, 30% min margin, 40% target margin)")
 
 def seed_vehicle_areas():
     """Create default areas for vehicle sizes"""
