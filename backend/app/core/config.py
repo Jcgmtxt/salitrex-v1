@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
-    COOKIE_SECURE: bool = False
+    COOKIE_SECURE: bool = True
     
     ALLOWED_HOSTS: Union[List[str], str] = ["localhost", "127.0.0.1"]
     CORS_ORIGINS: Union[List[str], str] = []

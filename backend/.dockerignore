@@ -9,8 +9,6 @@ env
 .gitignore
 *.md
 *.db
-alembic.ini
-alembic/
 tests/
 .pytest_cache/
 .coverage
@@ -20,4 +18,3 @@ build/
 *.egg-info
 .dockerignore
 Dockerfile
-docker-entrypoint.sh
